@@ -93,7 +93,7 @@ jobs:
           SHORT="${GITHUB_SHA:0:7}"
           mkdir -p artifacts
           cp app/build/outputs/apk/debug/app-debug.apk \
-             artifacts/ScreenStream-debug-${SHORT}.apk
+             artifacts/Miroir-debug-${SHORT}.apk
 
       - name: Rename release APK
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
@@ -101,21 +101,21 @@ jobs:
           SHORT="${GITHUB_SHA:0:7}"
           mkdir -p artifacts
           cp app/build/outputs/apk/release/app-release-unsigned.apk \
-             artifacts/ScreenStream-release-unsigned-${SHORT}.apk
+             artifacts/Miroir-release-unsigned-${SHORT}.apk
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: ScreenStream-debug-${{ github.sha }}
-          path: artifacts/ScreenStream-debug-*.apk
+          name: Miroir-debug-${{ github.sha }}
+          path: artifacts/Miroir-debug-*.apk
           retention-days: 30
 
       - name: Upload release APK (unsigned)
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
-          name: ScreenStream-release-unsigned-${{ github.sha }}
-          path: artifacts/ScreenStream-release-unsigned-*.apk
+          name: Miroir-release-unsigned-${{ github.sha }}
+          path: artifacts/Miroir-release-unsigned-*.apk
           retention-days: 30
 
   release:
@@ -154,28 +154,28 @@ jobs:
 
       - name: Add a named, versioned copy of the release APK
         # app-release.apk itself must keep this exact name: it's the literal
-        # filename F-Droid's Binaries: URL template in metadata/com.screenstream.yml
+        # filename F-Droid's Binaries: URL template in metadata/com.miroir.yml
         # expects for reproducible-build verification, for this and every past
         # release. This is purely an additional, friendlier-named copy for
         # people downloading straight off the GitHub release page.
         run: |
           cp app/build/outputs/apk/release/app-release.apk \
-             app/build/outputs/apk/release/ScreenStream-${{ github.ref_name }}.apk
+             app/build/outputs/apk/release/Miroir-${{ github.ref_name }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Screen Stream ${{ github.ref_name }}
+          name: Miroir ${{ github.ref_name }}
           files: |
             app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/apk/release/ScreenStream-${{ github.ref_name }}.apk
+            app/build/outputs/apk/release/Miroir-${{ github.ref_name }}.apk
           body: |
-            ## Screen Stream ${{ github.ref_name }}
+            ## Miroir ${{ github.ref_name }}
 
             ### Install
-            Download `ScreenStream-${{ github.ref_name }}.apk` and sideload it:
+            Download `Miroir-${{ github.ref_name }}.apk` and sideload it:
             ```
-            adb install ScreenStream-${{ github.ref_name }}.apk
+            adb install Miroir-${{ github.ref_name }}.apk
             ```
 
             `app-release.apk` is the identical APK under the filename F-Droid's
