@@ -1,14 +1,13 @@
 # Miroir
 
+> *Miroir* because your screen deserves a reflection, not a copy.
+> 
 <p align="center">
   <img src="graphics/icon.svg" width="120" height="120" alt="Miroir logo" />
 </p>
 
-> **Experimental**: core functionality works but the project is under active development. Expect rough edges.
-
 Stream your Android screen to any browser on your local Wi-Fi network. No accounts, no cloud, no cables. Open the app, tap Start, and share the URL anyone on the same network can watch immediately in Chrome, Firefox, Safari, or any modern browser.
 
-> *Miroir* (French for *mirror*) — because your screen deserves a reflection, not a copy.
 
 <img width="2076" height="2152" alt="Screenshot" src="https://github.com/user-attachments/assets/5012f099-c2f5-4e8c-b504-1d371f19165c" />
 
