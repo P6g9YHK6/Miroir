@@ -1,0 +1,40 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "gradle"
+    groups:
+      android-dependencies:
+        patterns:
+          - "androidx.*"
+          - "com.google.android.*"
+        update-types:
+          - "minor"
+          - "patch"
+      gradle-plugins:
+        patterns:
+          - "com.android.tools.build*"
+          - "org.jetbrains.kotlin*"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    open-pull-requests-limit: 5
