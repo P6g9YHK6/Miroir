@@ -1520,7 +1520,7 @@ public class MiroirService extends Service {
 + "  }"
 + "}"
 + "function checkFrameStall(){"
-+ "  if(!si || si.readyState!==2) return;"
++ "  if(!si || si.readyState < 2) return;"
 + "  try{"
 + "    var canvas=document.createElement('canvas');"
 + "    canvas.width=16;canvas.height=16;"
