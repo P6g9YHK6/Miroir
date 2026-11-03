@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,21 +14,21 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
-public class ScreenStreamServiceAuthTest {
+public class MiroirServiceAuthTest {
 
-    private final ScreenStreamService service = new ScreenStreamService();
+    private final MiroirService service = new MiroirService();
 
     @Test
     public void noneModeAlwaysAuthorized() {
-        ScreenStreamService.setAuthMode(ScreenStreamService.AuthMode.NONE);
+        MiroirService.setAuthMode(MiroirService.AuthMode.NONE);
         assertTrue(service.isAuthorized("", Collections.emptyMap()));
         assertTrue(service.isAuthorized(null, Collections.emptyMap()));
     }
 
     @Test
     public void pinModeRequiresMatchingPin() {
-        ScreenStreamService.setAuthMode(ScreenStreamService.AuthMode.PIN);
-        ScreenStreamService.setRequiredPin("123456");
+        MiroirService.setAuthMode(MiroirService.AuthMode.PIN);
+        MiroirService.setRequiredPin("123456");
 
         assertTrue(service.isAuthorized("pin=123456", Collections.emptyMap()));
         assertFalse(service.isAuthorized("pin=000000", Collections.emptyMap()));
@@ -38,16 +38,16 @@ public class ScreenStreamServiceAuthTest {
 
     @Test
     public void pinModeWithEmptyConfiguredPinDeniesEverything() {
-        ScreenStreamService.setAuthMode(ScreenStreamService.AuthMode.PIN);
-        ScreenStreamService.setRequiredPin("");
+        MiroirService.setAuthMode(MiroirService.AuthMode.PIN);
+        MiroirService.setRequiredPin("");
         assertFalse(service.isAuthorized("pin=", Collections.emptyMap()));
         assertFalse(service.isAuthorized("pin=anything", Collections.emptyMap()));
     }
 
     @Test
     public void basicModeRequiresMatchingCredentials() {
-        ScreenStreamService.setAuthMode(ScreenStreamService.AuthMode.BASIC);
-        ScreenStreamService.setBasicCredentials("viewer", "s3cret");
+        MiroirService.setAuthMode(MiroirService.AuthMode.BASIC);
+        MiroirService.setBasicCredentials("viewer", "s3cret");
 
         Map<String, String> okHeaders = new HashMap<>();
         okHeaders.put("authorization", "Basic " + basicAuthValue("viewer", "s3cret"));
@@ -62,8 +62,8 @@ public class ScreenStreamServiceAuthTest {
 
     @Test
     public void basicModeRejectsMalformedAuthorizationHeader() {
-        ScreenStreamService.setAuthMode(ScreenStreamService.AuthMode.BASIC);
-        ScreenStreamService.setBasicCredentials("viewer", "s3cret");
+        MiroirService.setAuthMode(MiroirService.AuthMode.BASIC);
+        MiroirService.setBasicCredentials("viewer", "s3cret");
 
         Map<String, String> notBasic = new HashMap<>();
         notBasic.put("authorization", "Bearer abcdef");
@@ -81,8 +81,8 @@ public class ScreenStreamServiceAuthTest {
 
     @Test
     public void basicModeWithNoConfiguredCredentialsDeniesEverything() {
-        ScreenStreamService.setAuthMode(ScreenStreamService.AuthMode.BASIC);
-        ScreenStreamService.setBasicCredentials("", "");
+        MiroirService.setAuthMode(MiroirService.AuthMode.BASIC);
+        MiroirService.setBasicCredentials("", "");
 
         Map<String, String> headers = new HashMap<>();
         headers.put("authorization", "Basic " + basicAuthValue("", ""));

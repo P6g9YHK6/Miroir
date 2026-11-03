@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -14,7 +14,7 @@ public class CopyErrorReceiver extends BroadcastReceiver {
         if (text == null || text.isEmpty()) return;
         ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (cm != null) {
-            cm.setPrimaryClip(ClipData.newPlainText("ScreenStream error", text));
+            cm.setPrimaryClip(ClipData.newPlainText("Miroir error", text));
             Toast.makeText(context, "Error copied to clipboard", Toast.LENGTH_SHORT).show();
         }
     }

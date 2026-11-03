@@ -1,12 +1,14 @@
-# Screen Stream
+# Miroir
 
 <p align="center">
-  <img src="graphics/icon.svg" width="120" height="120" alt="ScreenStream logo" />
+  <img src="graphics/icon.svg" width="120" height="120" alt="Miroir logo" />
 </p>
 
 > **Experimental**: core functionality works but the project is under active development. Expect rough edges.
 
 Stream your Android screen to any browser on your local Wi-Fi network. No accounts, no cloud, no cables. Open the app, tap Start, and share the URL anyone on the same network can watch immediately in Chrome, Firefox, Safari, or any modern browser.
+
+> *Miroir* (French for *mirror*) — because your screen deserves a reflection, not a copy.
 
 <img width="2076" height="2152" alt="Screenshot" src="https://github.com/user-attachments/assets/5012f099-c2f5-4e8c-b504-1d371f19165c" />
 
@@ -50,7 +52,7 @@ Miracast and Chromecast are the standard ways to mirror an Android screen to a d
 - **Chromecast** requires a Google account, the Google Home app, and both devices to be on the same network segment. It does not work on networks that isolate clients from each other (common in offices, hotels, schools, and mobile hotspots). It also requires the display to have a Chromecast device attached.
 - Both protocols have **codec negotiation** that can fail depending on the device, driver, or firmware version. When they fail, there is usually no useful error message.
 
-ScreenStream sidesteps all of this. It runs a plain HTTP server on your phone and serves MJPEG video over a standard browser request. Any device with a browser and a network connection can view the stream: a laptop, a desktop, a smart TV with a browser, another phone. There is no pairing, no app install on the viewer side, no codec negotiation, no protocol handshake that can silently fail. If the browser can load a webpage, it can display the stream.
+Miroir sidesteps all of this. It runs a plain HTTP server on your phone and serves MJPEG video over a standard browser request. Any device with a browser and a network connection can view the stream: a laptop, a desktop, a smart TV with a browser, another phone. There is no pairing, no app install on the viewer side, no codec negotiation, no protocol handshake that can silently fail. If the browser can load a webpage, it can display the stream.
 
 This makes it particularly useful in environments where casting protocols are unreliable: presentations from a phone to a projector connected to a laptop, streaming to a car's built-in browser, or demonstrating an app on a network that blocks Wi-Fi Direct.
 
@@ -82,8 +84,8 @@ Leave the stream open on a wall-mounted screen or tablet to display a home autom
 ## Setup
 
 ```bash
-git clone https://github.com/P6g9YHK6/ScreenStream.git
-cd ScreenStream
+git clone https://github.com/P6g9YHK6/Miroir.git
+cd Miroir
 ```
 
 ## Build
@@ -96,7 +98,7 @@ cd ScreenStream
 
 ### From Android Studio
 
-1. Open the `ScreenStream` folder
+1. Open the `Miroir` folder
 2. Let Gradle sync complete
 3. Connect a device with USB debugging enabled
 4. Run → Run 'app'
@@ -104,7 +106,7 @@ cd ScreenStream
 ### From the command line
 
 ```bash
-cd ScreenStream
+cd Miroir
 ./gradlew assembleDebug
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
@@ -117,7 +119,7 @@ Every push builds both a debug and unsigned release APK, available as workflow a
 
 ## Usage
 
-1. Open **ScreenStream** on your Android device
+1. Open **Miroir** on your Android device
 2. Configure frame rate, quality, audio settings, port, authentication, and HTTPS as needed
 3. Tap **Start Streaming** and accept the screen capture prompt
 4. The app shows the stream URL, for example `http://192.168.1.42:8080`, or `https://192.168.1.42:8080` if the HTTPS toggle is on

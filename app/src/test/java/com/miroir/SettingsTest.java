@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

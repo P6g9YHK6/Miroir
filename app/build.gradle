@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.screenstream'
+    namespace 'com.miroir'
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.screenstream"
+        applicationId "com.miroir"
         minSdk 23
         targetSdk 35
         versionCode 5
@@ -45,12 +45,25 @@ android {
             vcsInfo {
                 include = false
             }
+            // Ensure deterministic output for reproducible builds
+            // Disable R8 optimizations that may produce non-deterministic output
+            matchingFallbacks = ['release']
         }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    // Force deterministic resource compilation
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
+    // Ensure deterministic Java compilation
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs << "-g:none" // No debug info for reproducibility
     }
 
     buildFeatures {

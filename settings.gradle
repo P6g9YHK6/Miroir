@@ -4,6 +4,13 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'com.android.application') {
+                useVersion '8.7.3'
+            }
+        }
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -13,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ScreenStream"
+rootProject.name = "Miroir"
 include ':app'

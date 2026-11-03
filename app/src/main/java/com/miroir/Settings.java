@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 /** Thin wrapper around SharedPreferences so app settings survive across sessions. */
 public class Settings {
 
-    private static final String PREFS_NAME = "screenstream_settings";
+    private static final String PREFS_NAME = "miroir_settings";
 
     public static final String KEY_QUALITY             = "quality";
     public static final String KEY_FPS                 = "fps";

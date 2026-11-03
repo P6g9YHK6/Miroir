@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -72,7 +72,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.X509ExtendedKeyManager;
 import javax.security.auth.x500.X500Principal;
 
-public class ScreenStreamService extends Service {
+public class MiroirService extends Service {
 
     private static final String CHANNEL_ID    = "ScreenStreamChannel";
     private static final int    NOTIFICATION_ID = 1;
@@ -80,7 +80,7 @@ public class ScreenStreamService extends Service {
 
     public static final String ACTION_START      = "ACTION_START";
     public static final String ACTION_STOP       = "ACTION_STOP";
-    public static final String ACTION_STOPPED    = "com.screenstream.ACTION_STOPPED";
+    public static final String ACTION_STOPPED    = "com.miroir.ACTION_STOPPED";
     public static final String EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE";
     public static final String EXTRA_DATA        = "EXTRA_DATA";
     public static final String EXTRA_PORT        = "EXTRA_PORT";
@@ -107,7 +107,7 @@ public class ScreenStreamService extends Service {
     // never replaced an already-broken key with a fresh single-digest one - the
     // alias needs to change too, so every device gets a new key under the current
     // (single-digest) KeyGenParameterSpec below.
-    private static final String HTTPS_KEY_ALIAS = "screenstream_https_key_v5";
+    private static final String HTTPS_KEY_ALIAS = "airscreen_https_key_v5";
 
     public enum AuthMode { NONE, PIN, BASIC }
 
@@ -862,7 +862,7 @@ public class ScreenStreamService extends Service {
             java.util.Enumeration<String> aliases = ks.aliases();
             while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
-                if (alias.startsWith("screenstream_https_key") && !alias.equals(HTTPS_KEY_ALIAS)) {
+                if (alias.startsWith("airscreen_https_key") && !alias.equals(HTTPS_KEY_ALIAS)) {
                     ks.deleteEntry(alias);
                 }
             }
@@ -1342,7 +1342,7 @@ public class ScreenStreamService extends Service {
         return "<!DOCTYPE html><html lang='en'><head>"
 + "<meta charset='utf-8'>"
 + "<meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1'>"
-+ "<title>ScreenStream</title>"
++ "<title>Miroir</title>"
 + "<style>"
 + ":root{--bg:#0a0a0f;--sur:#13131a;--bdr:#1e1e2e;--acc:#4f8ef7;--ac2:#7c5cbf;--txt:#e2e2f0;--mut:#555570;--grn:#22c55e;--red:#ef4444;--yel:#f59e0b;}"
 + "*{margin:0;padding:0;box-sizing:border-box;}"
@@ -1393,7 +1393,7 @@ public class ScreenStreamService extends Service {
 + "</style></head><body>"
 + "<div id='app'>"
 + "<div id='topbar'>"
-+ "<h1>ScreenStream</h1>"
++ "<h1>Miroir</h1>"
 + "<div id='badge'><div id='dot'></div><span id='stxt'>Connecting...</span></div>"
 + "<div id='controls'>"
 + "<span id='obadge'>--</span>"
@@ -1600,13 +1600,13 @@ public class ScreenStreamService extends Service {
 
     private Notification buildNotification(int port) {
         PendingIntent stopPi = PendingIntent.getService(this, 0,
-            new Intent(this, ScreenStreamService.class).setAction(ACTION_STOP),
+            new Intent(this, MiroirService.class).setAction(ACTION_STOP),
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         PendingIntent mainPi = PendingIntent.getActivity(this, 0,
             new Intent(this, MainActivity.class),
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("ScreenStream - Live")
+            .setContentTitle("Miroir - Live")
             .setContentText("Streaming on port " + port)
             .setSmallIcon(android.R.drawable.ic_menu_share)
             .setContentIntent(mainPi)

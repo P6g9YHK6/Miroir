@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import org.junit.Test;
 
@@ -8,40 +8,40 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class ScreenStreamServiceParsingTest {
+public class MiroirServiceParsingTest {
 
     @Test
     public void extractQueryParamFindsValue() {
-        assertEquals("123456", ScreenStreamService.extractQueryParam("pin=123456", "pin"));
-        assertEquals("123456", ScreenStreamService.extractQueryParam("t=1&pin=123456", "pin"));
-        assertEquals("123456", ScreenStreamService.extractQueryParam("pin=123456&t=1", "pin"));
+        assertEquals("123456", MiroirService.extractQueryParam("pin=123456", "pin"));
+        assertEquals("123456", MiroirService.extractQueryParam("t=1&pin=123456", "pin"));
+        assertEquals("123456", MiroirService.extractQueryParam("pin=123456&t=1", "pin"));
     }
 
     @Test
     public void extractQueryParamMissingReturnsNull() {
-        assertNull(ScreenStreamService.extractQueryParam("t=1", "pin"));
-        assertNull(ScreenStreamService.extractQueryParam("", "pin"));
-        assertNull(ScreenStreamService.extractQueryParam(null, "pin"));
+        assertNull(MiroirService.extractQueryParam("t=1", "pin"));
+        assertNull(MiroirService.extractQueryParam("", "pin"));
+        assertNull(MiroirService.extractQueryParam(null, "pin"));
     }
 
     @Test
     public void extractQueryParamEmptyValue() {
-        assertEquals("", ScreenStreamService.extractQueryParam("pin=&t=1", "pin"));
+        assertEquals("", MiroirService.extractQueryParam("pin=&t=1", "pin"));
     }
 
     @Test
     public void constantTimeEqualsMatchesAndMismatches() {
-        assertTrue(ScreenStreamService.constantTimeEquals("secret", "secret"));
-        assertTrue(ScreenStreamService.constantTimeEquals("", ""));
-        assertTrue(ScreenStreamService.constantTimeEquals(null, null));
-        assertTrue(ScreenStreamService.constantTimeEquals(null, ""));
+        assertTrue(MiroirService.constantTimeEquals("secret", "secret"));
+        assertTrue(MiroirService.constantTimeEquals("", ""));
+        assertTrue(MiroirService.constantTimeEquals(null, null));
+        assertTrue(MiroirService.constantTimeEquals(null, ""));
     }
 
     @Test
     public void constantTimeEqualsDetectsDifference() {
-        org.junit.Assert.assertFalse(ScreenStreamService.constantTimeEquals("secret", "different"));
-        org.junit.Assert.assertFalse(ScreenStreamService.constantTimeEquals("secret", "secre"));
-        org.junit.Assert.assertFalse(ScreenStreamService.constantTimeEquals("secret", null));
+        org.junit.Assert.assertFalse(MiroirService.constantTimeEquals("secret", "different"));
+        org.junit.Assert.assertFalse(MiroirService.constantTimeEquals("secret", "secre"));
+        org.junit.Assert.assertFalse(MiroirService.constantTimeEquals("secret", null));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ScreenStreamServiceParsingTest {
             "",
             "ignored body"
         };
-        Map<String, String> headers = ScreenStreamService.parseHeaders(lines);
+        Map<String, String> headers = MiroirService.parseHeaders(lines);
         assertEquals("192.168.1.5:8080", headers.get("host"));
         assertEquals("Basic dXNlcjpwYXNz", headers.get("authorization"));
         assertEquals(2, headers.size());
@@ -68,7 +68,7 @@ public class ScreenStreamServiceParsingTest {
             "Valid: yes",
             ""
         };
-        Map<String, String> headers = ScreenStreamService.parseHeaders(lines);
+        Map<String, String> headers = MiroirService.parseHeaders(lines);
         assertEquals("yes", headers.get("valid"));
         assertEquals(1, headers.size());
     }
@@ -76,34 +76,34 @@ public class ScreenStreamServiceParsingTest {
     @Test
     public void parseHeadersOnFirstLineOnlyReturnsEmptyMap() {
         String[] lines = {"GET / HTTP/1.1"};
-        Map<String, String> headers = ScreenStreamService.parseHeaders(lines);
+        Map<String, String> headers = MiroirService.parseHeaders(lines);
         assertTrue(headers.isEmpty());
     }
 
     @Test
     public void bindFailureMessageDetectsPermissionDenied() {
-        String msg = ScreenStreamService.bindFailureMessage(80, "bind failed: EACCES (Permission denied)");
+        String msg = MiroirService.bindFailureMessage(80, "bind failed: EACCES (Permission denied)");
         assertTrue(msg.contains("needs root"));
         assertTrue(msg.contains("80"));
     }
 
     @Test
     public void bindFailureMessageDetectsAddressInUse() {
-        String msg = ScreenStreamService.bindFailureMessage(8080, "bind failed: EADDRINUSE (Address already in use)");
+        String msg = MiroirService.bindFailureMessage(8080, "bind failed: EADDRINUSE (Address already in use)");
         assertTrue(msg.contains("already in use"));
         assertTrue(msg.contains("8080"));
     }
 
     @Test
     public void bindFailureMessageFallsBackForUnknownCause() {
-        String msg = ScreenStreamService.bindFailureMessage(443, "something unexpected happened");
+        String msg = MiroirService.bindFailureMessage(443, "something unexpected happened");
         assertTrue(msg.contains("Failed to bind port 443"));
         assertTrue(msg.contains("something unexpected happened"));
     }
 
     @Test
     public void bindFailureMessageHandlesNullExceptionMessage() {
-        String msg = ScreenStreamService.bindFailureMessage(21, null);
+        String msg = MiroirService.bindFailureMessage(21, null);
         assertTrue(msg.contains("Failed to bind port 21"));
     }
 }

@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +27,11 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
-public class ScreenStreamServiceHttpServerLifecycleTest {
+public class MiroirServiceHttpServerLifecycleTest {
 
     @Test
     public void stopCaptureClosesAndClearsTheListeningSocket() throws Exception {
-        ScreenStreamService service = new ScreenStreamService();
+        MiroirService service = new MiroirService();
 
         ServerSocket socket = new ServerSocket(0);
         Thread thread = new Thread(() -> { });
@@ -50,25 +50,25 @@ public class ScreenStreamServiceHttpServerLifecycleTest {
 
     @Test
     public void stopCaptureWithNoServerRunningDoesNotThrow() throws Exception {
-        ScreenStreamService service = new ScreenStreamService();
+        MiroirService service = new MiroirService();
         invokeStopCapture(service);
         assertNull(getField(service, "serverSocket"));
     }
 
-    private static void invokeStopCapture(ScreenStreamService service) throws Exception {
-        Method m = ScreenStreamService.class.getDeclaredMethod("stopCapture");
+    private static void invokeStopCapture(MiroirService service) throws Exception {
+        Method m = MiroirService.class.getDeclaredMethod("stopCapture");
         m.setAccessible(true);
         m.invoke(service);
     }
 
     private static void setField(Object target, String name, Object value) throws Exception {
-        Field f = ScreenStreamService.class.getDeclaredField(name);
+        Field f = MiroirService.class.getDeclaredField(name);
         f.setAccessible(true);
         f.set(target, value);
     }
 
     private static Object getField(Object target, String name) throws Exception {
-        Field f = ScreenStreamService.class.getDeclaredField(name);
+        Field f = MiroirService.class.getDeclaredField(name);
         f.setAccessible(true);
         return f.get(target);
     }

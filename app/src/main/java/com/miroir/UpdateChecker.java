@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class UpdateChecker {
 
     private static final String API_URL =
-        "https://api.github.com/repos/P6g9YHK6/ScreenStream/releases/latest";
+        "https://api.github.com/repos/P6g9YHK6/Miroir/releases/latest";
 
     private static final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "UpdateChecker");

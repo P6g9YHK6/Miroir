@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,12 +35,12 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
-public class ScreenStreamServiceHttpServerRaceTest {
+public class MiroirServiceHttpServerRaceTest {
 
     @Test
     public void stopCaptureDuringAcceptLoopDoesNotCrashTheServerThread() throws Exception {
-        ScreenStreamService.setHttpsEnabled(false);
-        ScreenStreamService service = new ScreenStreamService();
+        MiroirService.setHttpsEnabled(false);
+        MiroirService service = new MiroirService();
 
         AtomicReference<Throwable> uncaught = new AtomicReference<>();
         Thread.UncaughtExceptionHandler original = Thread.getDefaultUncaughtExceptionHandler();
@@ -86,13 +86,13 @@ public class ScreenStreamServiceHttpServerRaceTest {
     }
 
     private static void invoke(Object target, String name, Class<?>[] paramTypes, Object... args) throws Exception {
-        Method m = ScreenStreamService.class.getDeclaredMethod(name, paramTypes);
+        Method m = MiroirService.class.getDeclaredMethod(name, paramTypes);
         m.setAccessible(true);
         m.invoke(target, args);
     }
 
     private static Object getField(Object target, String name) throws Exception {
-        Field f = ScreenStreamService.class.getDeclaredField(name);
+        Field f = MiroirService.class.getDeclaredField(name);
         f.setAccessible(true);
         return f.get(target);
     }

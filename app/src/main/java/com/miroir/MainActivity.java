@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,7 +44,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG          = "ScreenStream";
+    private static final String TAG          = "Miroir";
     private static final int    DEFAULT_PORT = 8080;
 
     private static final SecureRandom secureRandom = new SecureRandom();
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private int     selectedPort       = DEFAULT_PORT;
     private String  currentUrl         = "";
 
-    private ScreenStreamService.AuthMode authMode  = ScreenStreamService.AuthMode.NONE;
+    private MiroirService.AuthMode authMode  = MiroirService.AuthMode.NONE;
     private String currentPin;
     private String basicUser;
     private String basicPass;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver stoppedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (ScreenStreamService.ACTION_STOPPED.equals(intent.getAction())) {
+            if (MiroirService.ACTION_STOPPED.equals(intent.getAction())) {
                 isStreaming = false;
                 updateStatusStopped();
                 if (autoRestart) {
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onProgressChanged(SeekBar s, int p, boolean f) {
                 int clamped = Math.max(10, p);
                 tvQuality.setText(clamped + "%");
-                ScreenStreamService.setJpegQuality(clamped);
+                MiroirService.setJpegQuality(clamped);
                 settings.putInt(Settings.KEY_QUALITY, clamped);
             }
             @Override public void onStartTrackingTouch(SeekBar s) {}
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setFps(int fps) {
         selectedFps = fps;
-        ScreenStreamService.setTargetFps(fps);
+        MiroirService.setTargetFps(fps);
         settings.putInt(Settings.KEY_FPS, fps);
         tvFpsLabel.setText("FPS: " + fps);
         int active   = getColor(R.color.colorPrimary);
@@ -246,10 +246,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupAudio() {
         audioEnabled = settings.getBoolean(Settings.KEY_AUDIO_ENABLED, true);
         switchAudio.setChecked(audioEnabled);
-        ScreenStreamService.setAudioEnabled(audioEnabled);
+        MiroirService.setAudioEnabled(audioEnabled);
         switchAudio.setOnCheckedChangeListener((btn, checked) -> {
             audioEnabled = checked;
-            ScreenStreamService.setAudioEnabled(checked);
+            MiroirService.setAudioEnabled(checked);
             settings.putBoolean(Settings.KEY_AUDIO_ENABLED, checked);
         });
     }
@@ -261,10 +261,10 @@ public class MainActivity extends AppCompatActivity {
         // from or written to settings, so it's opt-in fresh every time the app opens.
         httpsEnabled = false;
         switchHttps.setChecked(false);
-        ScreenStreamService.setHttpsEnabled(false);
+        MiroirService.setHttpsEnabled(false);
         switchHttps.setOnCheckedChangeListener((btn, checked) -> {
             httpsEnabled = checked;
-            ScreenStreamService.setHttpsEnabled(checked);
+            MiroirService.setHttpsEnabled(checked);
         });
     }
 
@@ -289,11 +289,11 @@ public class MainActivity extends AppCompatActivity {
         spinnerSampleRate.setAdapter(srAdapter);
         selectedSampleRate = settings.getInt(Settings.KEY_AUDIO_SAMPLE_RATE, 44100);
         spinnerSampleRate.setSelection(indexOf(srValues, selectedSampleRate, 2));
-        ScreenStreamService.setAudioSampleRate(selectedSampleRate);
+        MiroirService.setAudioSampleRate(selectedSampleRate);
         spinnerSampleRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
                 selectedSampleRate = srValues[pos];
-                ScreenStreamService.setAudioSampleRate(selectedSampleRate);
+                MiroirService.setAudioSampleRate(selectedSampleRate);
                 settings.putInt(Settings.KEY_AUDIO_SAMPLE_RATE, selectedSampleRate);
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
@@ -308,11 +308,11 @@ public class MainActivity extends AppCompatActivity {
         spinnerChannels.setAdapter(chAdapter);
         selectedChannels = settings.getInt(Settings.KEY_AUDIO_CHANNELS, 2);
         spinnerChannels.setSelection(indexOf(chValues, selectedChannels, 1));
-        ScreenStreamService.setAudioChannels(selectedChannels);
+        MiroirService.setAudioChannels(selectedChannels);
         spinnerChannels.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
                 selectedChannels = chValues[pos];
-                ScreenStreamService.setAudioChannels(selectedChannels);
+                MiroirService.setAudioChannels(selectedChannels);
                 settings.putInt(Settings.KEY_AUDIO_CHANNELS, selectedChannels);
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
@@ -331,11 +331,11 @@ public class MainActivity extends AppCompatActivity {
         spinnerEncoding.setAdapter(encAdapter);
         selectedEncoding = settings.getInt(Settings.KEY_AUDIO_ENCODING, AudioFormat.ENCODING_PCM_16BIT);
         spinnerEncoding.setSelection(indexOf(encValues, selectedEncoding, 0));
-        ScreenStreamService.setAudioEncoding(selectedEncoding);
+        MiroirService.setAudioEncoding(selectedEncoding);
         spinnerEncoding.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
                 selectedEncoding = encValues[pos];
-                ScreenStreamService.setAudioEncoding(selectedEncoding);
+                MiroirService.setAudioEncoding(selectedEncoding);
                 settings.putInt(Settings.KEY_AUDIO_ENCODING, selectedEncoding);
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupAuth() {
-        authMode = parseAuthModeName(settings.getString(Settings.KEY_AUTH_MODE, ScreenStreamService.AuthMode.NONE.name()));
+        authMode = parseAuthModeName(settings.getString(Settings.KEY_AUTH_MODE, MiroirService.AuthMode.NONE.name()));
 
         currentPin = settings.getString(Settings.KEY_PIN, null);
         if (currentPin == null) {
@@ -432,20 +432,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private static ScreenStreamService.AuthMode parseAuthModeName(String name) {
+    private static MiroirService.AuthMode parseAuthModeName(String name) {
         try {
-            return ScreenStreamService.AuthMode.valueOf(name);
+            return MiroirService.AuthMode.valueOf(name);
         } catch (Exception e) {
-            return ScreenStreamService.AuthMode.NONE;
+            return MiroirService.AuthMode.NONE;
         }
     }
 
     private void updateAuthRowsVisibility() {
-        layoutPinRow.setVisibility(authMode == ScreenStreamService.AuthMode.PIN ? View.VISIBLE : View.GONE);
-        layoutBasicRow.setVisibility(authMode == ScreenStreamService.AuthMode.BASIC ? View.VISIBLE : View.GONE);
+        layoutPinRow.setVisibility(authMode == MiroirService.AuthMode.PIN ? View.VISIBLE : View.GONE);
+        layoutBasicRow.setVisibility(authMode == MiroirService.AuthMode.BASIC ? View.VISIBLE : View.GONE);
     }
 
-    private static int authModeToIndex(ScreenStreamService.AuthMode mode) {
+    private static int authModeToIndex(MiroirService.AuthMode mode) {
         switch (mode) {
             case PIN:   return 1;
             case BASIC: return 2;
@@ -453,11 +453,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static ScreenStreamService.AuthMode indexToAuthMode(int pos) {
+    private static MiroirService.AuthMode indexToAuthMode(int pos) {
         switch (pos) {
-            case 1:  return ScreenStreamService.AuthMode.PIN;
-            case 2:  return ScreenStreamService.AuthMode.BASIC;
-            default: return ScreenStreamService.AuthMode.NONE;
+            case 1:  return MiroirService.AuthMode.PIN;
+            case 2:  return MiroirService.AuthMode.BASIC;
+            default: return MiroirService.AuthMode.NONE;
         }
     }
 
@@ -493,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
             .setMessage("Version " + latestVersion + " is available on GitHub.\nThis build is "
                 + BuildConfig.VERSION_NAME + ".")
             .setPositiveButton("View on GitHub", (d, w) -> startActivity(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/P6g9YHK6/ScreenStream/releases"))))
+                Uri.parse("https://github.com/P6g9YHK6/Miroir/releases"))))
             .setNegativeButton("Later", null)
             .show();
     }
@@ -562,23 +562,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startStreamingService(int resultCode, Intent data) {
-        Intent svc = new Intent(this, ScreenStreamService.class);
-        svc.setAction(ScreenStreamService.ACTION_START);
-        svc.putExtra(ScreenStreamService.EXTRA_RESULT_CODE, resultCode);
-        svc.putExtra(ScreenStreamService.EXTRA_DATA, data);
-        svc.putExtra(ScreenStreamService.EXTRA_PORT, selectedPort);
-        svc.putExtra(ScreenStreamService.EXTRA_QUALITY, seekBarQuality.getProgress());
-        svc.putExtra(ScreenStreamService.EXTRA_FPS, selectedFps);
-        svc.putExtra(ScreenStreamService.EXTRA_AUDIO, audioEnabled);
-        svc.putExtra(ScreenStreamService.EXTRA_HTTPS, httpsEnabled);
-        svc.putExtra(ScreenStreamService.EXTRA_KEEP_AWAKE, keepAwake);
-        svc.putExtra(ScreenStreamService.EXTRA_AUDIO_SR, selectedSampleRate);
-        svc.putExtra(ScreenStreamService.EXTRA_AUDIO_CH, selectedChannels);
-        svc.putExtra(ScreenStreamService.EXTRA_AUDIO_ENC, selectedEncoding);
-        svc.putExtra(ScreenStreamService.EXTRA_AUTH_MODE, authMode.name());
-        svc.putExtra(ScreenStreamService.EXTRA_PIN, currentPin);
-        svc.putExtra(ScreenStreamService.EXTRA_BASIC_USER, basicUser);
-        svc.putExtra(ScreenStreamService.EXTRA_BASIC_PASS, basicPass);
+        Intent svc = new Intent(this, MiroirService.class);
+        svc.setAction(MiroirService.ACTION_START);
+        svc.putExtra(MiroirService.EXTRA_RESULT_CODE, resultCode);
+        svc.putExtra(MiroirService.EXTRA_DATA, data);
+        svc.putExtra(MiroirService.EXTRA_PORT, selectedPort);
+        svc.putExtra(MiroirService.EXTRA_QUALITY, seekBarQuality.getProgress());
+        svc.putExtra(MiroirService.EXTRA_FPS, selectedFps);
+        svc.putExtra(MiroirService.EXTRA_AUDIO, audioEnabled);
+        svc.putExtra(MiroirService.EXTRA_HTTPS, httpsEnabled);
+        svc.putExtra(MiroirService.EXTRA_KEEP_AWAKE, keepAwake);
+        svc.putExtra(MiroirService.EXTRA_AUDIO_SR, selectedSampleRate);
+        svc.putExtra(MiroirService.EXTRA_AUDIO_CH, selectedChannels);
+        svc.putExtra(MiroirService.EXTRA_AUDIO_ENC, selectedEncoding);
+        svc.putExtra(MiroirService.EXTRA_AUTH_MODE, authMode.name());
+        svc.putExtra(MiroirService.EXTRA_PIN, currentPin);
+        svc.putExtra(MiroirService.EXTRA_BASIC_USER, basicUser);
+        svc.putExtra(MiroirService.EXTRA_BASIC_PASS, basicPass);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(svc);
         else startService(svc);
         isStreaming = true;
@@ -586,8 +586,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void stopStreaming() {
-        Intent svc = new Intent(this, ScreenStreamService.class);
-        svc.setAction(ScreenStreamService.ACTION_STOP);
+        Intent svc = new Intent(this, MiroirService.class);
+        svc.setAction(MiroirService.ACTION_STOP);
         startService(svc);
         isStreaming = false;
         updateStatusStopped();
@@ -599,7 +599,7 @@ public class MainActivity extends AppCompatActivity {
         btnToggle.setText("Stop Streaming");
         btnToggle.setBackgroundColor(getColor(R.color.red));
         currentUrl = (httpsEnabled ? "https://" : "http://") + getLocalIpAddress() + ":" + selectedPort;
-        if (authMode == ScreenStreamService.AuthMode.PIN) {
+        if (authMode == MiroirService.AuthMode.PIN) {
             currentUrl += "/?pin=" + currentPin;
         }
         tvUrl.setText(currentUrl);
@@ -696,7 +696,7 @@ public class MainActivity extends AppCompatActivity {
             .setPositiveButton("Dismiss", null)
             .setNegativeButton("Copy", (d, w) -> {
                 ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                cm.setPrimaryClip(ClipData.newPlainText("ScreenStream error", copyText));
+                cm.setPrimaryClip(ClipData.newPlainText("Miroir error", copyText));
                 Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
             })
             .setNeutralButton("Stop Stream", (d, w) -> { if (isStreaming) stopStreaming(); })
@@ -715,7 +715,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(ScreenStreamService.ACTION_STOPPED);
+        IntentFilter filter = new IntentFilter(MiroirService.ACTION_STOPPED);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(stoppedReceiver, filter, RECEIVER_NOT_EXPORTED);
         } else {

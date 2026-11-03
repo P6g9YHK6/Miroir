@@ -1,6 +1,6 @@
 Stream your Android screen to any browser on your local Wi-Fi network in real time. No accounts, no cloud, no installation needed on the viewer side.
 
-Open the app, tap Start Streaming, and share the URL with anyone on the same network. The stream opens directly in Chrome, Firefox, Safari, the Tesla browser, or any modern browser.
+Open Miroir, tap Start Streaming, and share the URL with anyone on the same network. The stream opens directly in Chrome, Firefox, Safari, the Tesla browser, or any modern browser.
 
 FEATURES
 

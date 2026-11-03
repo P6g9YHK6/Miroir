@@ -1,4 +1,4 @@
-package com.screenstream;
+package com.miroir;
 
 import android.widget.Button;
 
