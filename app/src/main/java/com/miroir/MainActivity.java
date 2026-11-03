@@ -39,7 +39,9 @@ import androidx.core.app.ActivityCompat;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int    DEFAULT_PORT = 8080;
 
     private static final SecureRandom secureRandom = new SecureRandom();
+
+    private enum Preset {
+        PRESENTATION,
+        GAMING,
+        DASHBOARD,
+        LOW_BANDWIDTH
+    }
 
     private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin, tvUpdateStatus;
     private Button   btnToggle, btnFps5, btnFps10, btnFps15, btnFps24, btnFps30, btnFps60;
@@ -141,7 +150,84 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        handleShortcutIntent(getIntent());
         updateStatusStopped();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleShortcutIntent(intent);
+    }
+
+    private void handleShortcutIntent(Intent intent) {
+        if (intent == null) return;
+        String action = intent.getAction();
+        if (action == null) return;
+
+        switch (action) {
+            case "com.miroir.START_STREAM":
+                if (!isStreaming) requestCapturePermission();
+                break;
+            case "com.miroir.STOP_STREAM":
+                if (isStreaming) stopStreaming();
+                break;
+            case "com.miroir.PRESET_PRESENTATION":
+                applyPreset(Preset.PRESENTATION);
+                if (!isStreaming) requestCapturePermission();
+                break;
+            case "com.miroir.PRESET_GAMING":
+                applyPreset(Preset.GAMING);
+                if (!isStreaming) requestCapturePermission();
+                break;
+            case "com.miroir.PRESET_DASHBOARD":
+                applyPreset(Preset.DASHBOARD);
+                if (!isStreaming) requestCapturePermission();
+                break;
+            case "com.miroir.PRESET_LOW_BANDWIDTH":
+                applyPreset(Preset.LOW_BANDWIDTH);
+                if (!isStreaming) requestCapturePermission();
+                break;
+        }
+    }
+
+    private void applyPreset(Preset preset) {
+        switch (preset) {
+            case PRESENTATION:
+                setFps(15);
+                seekBarQuality.setProgress(70);
+                switchAudio.setChecked(false);
+                editPort.setText("8080");
+                spinnerAuthMode.setSelection(0); // None
+                switchKeepAwake.setChecked(true);
+                break;
+            case GAMING:
+                setFps(60);
+                seekBarQuality.setProgress(85);
+                switchAudio.setChecked(true);
+                spinnerSampleRate.setSelection(3); // 48kHz
+                spinnerChannels.setSelection(1); // Stereo
+                editPort.setText("8080");
+                spinnerAuthMode.setSelection(0); // None
+                switchKeepAwake.setChecked(true);
+                break;
+            case DASHBOARD:
+                setFps(5);
+                seekBarQuality.setProgress(50);
+                switchAudio.setChecked(false);
+                editPort.setText("8080");
+                spinnerAuthMode.setSelection(0); // None
+                switchKeepAwake.setChecked(true);
+                break;
+            case LOW_BANDWIDTH:
+                setFps(10);
+                seekBarQuality.setProgress(40);
+                switchAudio.setChecked(false);
+                editPort.setText("8080");
+                spinnerAuthMode.setSelection(0); // None
+                switchKeepAwake.setChecked(false);
+                break;
+        }
     }
 
     private void bindViewsAndListeners() {
@@ -275,6 +361,62 @@ public class MainActivity extends AppCompatActivity {
             keepAwake = checked;
             settings.putBoolean(Settings.KEY_KEEP_AWAKE, checked);
         });
+    }
+
+    private String getLocalIpAddress() {
+        try {
+            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                String ifaceName = iface.getName().toLowerCase(Locale.ROOT);
+                if (ifaceName.contains("tun") || ifaceName.contains("tap") ||
+                    ifaceName.contains("vpn") || ifaceName.contains("ppp") ||
+                    ifaceName.contains("docker") || ifaceName.contains("veth") ||
+                    ifaceName.equals("lo") || ifaceName.startsWith("lo:")) {
+                    continue;
+                }
+                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+                    String host = addr.getHostAddress();
+                    if (addr.isLoopbackAddress() || host == null || host.contains(":")) continue;
+                    if (ifaceName.startsWith("wlan") || ifaceName.startsWith("wifi") ||
+                        ifaceName.equals("wlan0") || ifaceName.equals("wlan1")) {
+                        return host;
+                    }
+                }
+            }
+            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                String ifaceName = iface.getName().toLowerCase(Locale.ROOT);
+                if (ifaceName.contains("tun") || ifaceName.contains("tap") ||
+                    ifaceName.contains("vpn") || ifaceName.contains("ppp") ||
+                    ifaceName.contains("docker") || ifaceName.contains("veth") ||
+                    ifaceName.equals("lo") || ifaceName.startsWith("lo:")) {
+                    continue;
+                }
+                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+                    String host = addr.getHostAddress();
+                    if (addr.isLoopbackAddress() || host == null || host.contains(":")) continue;
+                    if (ifaceName.startsWith("eth") || ifaceName.startsWith("enp") ||
+                        ifaceName.startsWith("rmnet") || ifaceName.startsWith("ccmni")) {
+                        return host;
+                    }
+                }
+            }
+            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                String ifaceName = iface.getName().toLowerCase(Locale.ROOT);
+                if (ifaceName.contains("tun") || ifaceName.contains("tap") ||
+                    ifaceName.contains("vpn") || ifaceName.contains("ppp") ||
+                    ifaceName.contains("docker") || ifaceName.contains("veth") ||
+                    ifaceName.equals("lo") || ifaceName.startsWith("lo:")) {
+                    continue;
+                }
+                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+                    String host = addr.getHostAddress();
+                    if (addr.isLoopbackAddress() || host == null || host.contains(":")) continue;
+                    return host;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "IP error", e);
+        }
+        return "0.0.0.0";
     }
 
     private void setupSpinners() {
@@ -607,6 +749,9 @@ public class MainActivity extends AppCompatActivity {
         tvUrlLabel.setVisibility(View.VISIBLE);
         tvUrlHint.setVisibility(View.VISIBLE);
         setOptionsEnabled(false);
+        if (keepAwake) {
+            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     private void updateStatusStopped() {
@@ -619,6 +764,7 @@ public class MainActivity extends AppCompatActivity {
         tvUrlHint.setVisibility(View.GONE);
         currentUrl = "";
         setOptionsEnabled(true);
+        getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private void setOptionsEnabled(boolean on) {
@@ -637,51 +783,6 @@ public class MainActivity extends AppCompatActivity {
         btnBasicRegen.setEnabled(on);
         editBasicUser.setEnabled(on);
         editBasicPass.setEnabled(on);
-    }
-
-    private String getLocalIpAddress() {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                android.net.ConnectivityManager cm =
-                    (android.net.ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                if (cm != null) {
-                    android.net.Network net = cm.getActiveNetwork();
-                    if (net != null) {
-                        android.net.LinkProperties lp = cm.getLinkProperties(net);
-                        if (lp != null) {
-                            for (android.net.LinkAddress la : lp.getLinkAddresses()) {
-                                java.net.InetAddress addr = la.getAddress();
-                                if (!addr.isLoopbackAddress() && addr instanceof java.net.Inet4Address) {
-                                    String host = addr.getHostAddress();
-                                    if (host != null) return host;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if (wm != null) {
-                    int ip = wm.getConnectionInfo().getIpAddress();
-                    if (ip != 0) {
-                        byte[] b = new byte[]{
-                            (byte)(ip & 0xff), (byte)(ip >> 8 & 0xff),
-                            (byte)(ip >> 16 & 0xff), (byte)(ip >> 24 & 0xff)};
-                        return java.net.InetAddress.getByAddress(b).getHostAddress();
-                    }
-                }
-            }
-            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
-                    String host = addr.getHostAddress();
-                    if (!addr.isLoopbackAddress() && host != null && !host.contains(":"))
-                        return host;
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "IP error", e);
-        }
-        return "0.0.0.0";
     }
 
     private void showErrorDialog(ErrorReporter.AppError error) {

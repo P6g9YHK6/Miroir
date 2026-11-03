@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_start"
+        android:shortcutId="start_stream"
+        android:shortcutShortLabel="@string/shortcut_start_stream"
+        android:shortcutLongLabel="@string/shortcut_start_stream_long">
+        <intent
+            android:action="com.miroir.START_STREAM"
+            android:targetClass="com.miroir.MainActivity"
+            android:targetPackage="com.miroir" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_stop"
+        android:shortcutId="stop_stream"
+        android:shortcutShortLabel="@string/shortcut_stop_stream"
+        android:shortcutLongLabel="@string/shortcut_stop_stream_long">
+        <intent
+            android:action="com.miroir.STOP_STREAM"
+            android:targetClass="com.miroir.MainActivity"
+            android:targetPackage="com.miroir" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_presentation"
+        android:shortcutId="preset_presentation"
+        android:shortcutShortLabel="@string/shortcut_presentation"
+        android:shortcutLongLabel="@string/shortcut_presentation_long">
+        <intent
+            android:action="com.miroir.PRESET_PRESENTATION"
+            android:targetClass="com.miroir.MainActivity"
+            android:targetPackage="com.miroir" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_gaming"
+        android:shortcutId="preset_gaming"
+        android:shortcutShortLabel="@string/shortcut_gaming"
+        android:shortcutLongLabel="@string/shortcut_gaming_long">
+        <intent
+            android:action="com.miroir.PRESET_GAMING"
+            android:targetClass="com.miroir.MainActivity"
+            android:targetPackage="com.miroir" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_dashboard"
+        android:shortcutId="preset_dashboard"
+        android:shortcutShortLabel="@string/shortcut_dashboard"
+        android:shortcutLongLabel="@string/shortcut_dashboard_long">
+        <intent
+            android:action="com.miroir.PRESET_DASHBOARD"
+            android:targetClass="com.miroir.MainActivity"
+            android:targetPackage="com.miroir" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_low_bandwidth"
+        android:shortcutId="preset_low_bandwidth"
+        android:shortcutShortLabel="@string/shortcut_low_bandwidth"
+        android:shortcutLongLabel="@string/shortcut_low_bandwidth_long">
+        <intent
+            android:action="com.miroir.PRESET_LOW_BANDWIDTH"
+            android:targetClass="com.miroir.MainActivity"
+            android:targetPackage="com.miroir" />
+    </shortcut>
+</shortcuts>

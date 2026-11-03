@@ -743,7 +743,7 @@ public class MiroirService extends Service {
                     .setSampleRate(sr)
                     .setChannelMask(chCfg)
                     .build())
-                .setBufferSizeInBytes(minBuf * 8)
+                .setBufferSizeInBytes(minBuf * 16)
                 .build();
 
             if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
@@ -782,7 +782,22 @@ public class MiroirService extends Service {
                             try { Thread.sleep(50); } catch (InterruptedException e) { return; }
                         }
                         if (!running) break;
-                        try { audioRecord.startRecording(); } catch (Exception e) { break; }
+                        boolean started = false;
+                        for (int retry = 0; retry < 3 && !started && running; retry++) {
+                            try {
+                                audioRecord.startRecording();
+                                started = true;
+                            } catch (Exception e) {
+                                ErrorReporter.get().warn(ErrorReporter.Source.AUDIO_CAPTURE,
+                                    "AudioRecord startRecording retry " + (retry + 1) + " failed: " + e.getMessage());
+                                try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                            }
+                        }
+                        if (!started) {
+                            ErrorReporter.get().error(ErrorReporter.Source.AUDIO_CAPTURE,
+                                "Failed to restart audio recording after 3 retries");
+                            break;
+                        }
                         continue;
                     }
                     if (audioSampleRate.get() != finalSr || audioChannels.get() != finalCh
@@ -1378,6 +1393,8 @@ public class MiroirService extends Service {
 + ".err-src{font-weight:700;color:var(--txt);margin-bottom:3px;}.err-msg{color:#aaa;line-height:1.4;}.err-time{color:var(--mut);font-size:.68rem;margin-top:4px;}"
 + "#bottombar{padding:6px 14px;background:var(--sur);border-top:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0;font-size:.7rem;color:var(--mut);}"
 + "#fps{color:var(--acc);font-weight:700;min-width:40px;}"
++ "#lat{color:var(--yel);font-weight:700;min-width:50px;}"
++ ".spark{display:inline-block;vertical-align:middle;width:48px;height:1em;margin-left:4px;}"
 + "#abar-w{flex:1;max-width:140px;height:3px;background:var(--bdr);border-radius:2px;overflow:hidden;}"
 + "#abar{height:100%;width:0%;background:linear-gradient(90deg,var(--acc),var(--ac2));transition:width .07s;}"
 + "#res{margin-left:auto;}"
@@ -1416,12 +1433,13 @@ public class MiroirService extends Service {
 + "<div id='err-list'><p style='color:var(--mut);font-size:.78rem;padding:10px;'>No events yet.</p></div>"
 + "</div>"
 + "<div id='stage'>"
-+ "<img id='si' alt='stream' onload='onLoad()' onerror='onErr()'/>"
++ "<img id='si' alt='stream' onload='onLoad()' onerror='onErr()' onabort='onAbort()'/>"
 + "<div id='overlay'><div id='spinner'></div><span id='ovtxt'>Connecting...</span></div>"
 + "</div>"
 + "<div id='err-toast'></div>"
 + "<div id='bottombar'>"
-+ "<span id='fps'>- fps</span>"
++ "<span id='fps'>- fps</span><canvas class='spark' id='fpsSpark'></canvas>"
++ "<span id='lat'> - ms</span><canvas class='spark' id='latSpark'></canvas>"
 + "<div id='abar-w'><div id='abar'></div></div>"
 + "<span id='res'>-</span>"
 + "<span id='err-badge' onclick='openErrPanel()'></span>"
@@ -1433,7 +1451,10 @@ public class MiroirService extends Service {
 + "var ovtxt=document.getElementById('ovtxt');"
 + "var stxt=document.getElementById('stxt');"
 + "var fpsCtr=document.getElementById('fps');"
++ "var latCtr=document.getElementById('lat');"
 + "var resCtr=document.getElementById('res');"
++ "var fpsSpark=document.getElementById('fpsSpark');"
++ "var latSpark=document.getElementById('latSpark');"
 + "var obadge=document.getElementById('obadge');"
 + "var abar=document.getElementById('abar');"
 + "var btnA=document.getElementById('btn-a');"
@@ -1473,11 +1494,15 @@ public class MiroirService extends Service {
 + "}"
 + "function openErrPanel(){document.getElementById('err-panel').classList.add('open');}"
 + "function closeErrPanel(){document.getElementById('err-panel').classList.remove('open');}"
-+ "var vRetry=0,vTimer=null,knownSession=0,fc=0,ft=Date.now();"
-+ "function connectVideo(){si.src='/stream?t='+Date.now()+(PIN?('&pin='+PIN):'');}"
++ "var vRetry=0,vTimer=null,knownSession=0,fc=0,ft=Date.now(),lastFrameTime=0,lastFrameHash='';"
++ "function connectVideo(){var now=Date.now();si.dataset.reqTs=String(now);si.src='';si.src='/stream?t='+now+'&r='+Math.random()+(PIN?('&pin='+PIN):'');}"
 + "function onLoad(){"
++ "  var now=Date.now();lastFrameTime=now;"
++ "  var reqTs=parseInt(si.dataset.reqTs||'0',10);"
++ "  if(reqTs>0){var lat=now-reqTs;latCtr.textContent=' - '+lat+' ms';drawSpark(latSpark,lat,100);}"
++ "  else{latCtr.textContent=' - N/A';}"
 + "  vRetry=0;if(vTimer){clearTimeout(vTimer);vTimer=null;}"
-+ "  fc++;var n=Date.now();if(n-ft>=1000){fpsCtr.textContent=fc+' fps';fc=0;ft=n;}"
++ "  fc++;var n=now;if(n-ft>=1000){fpsCtr.textContent=fc+' fps';drawSpark(fpsSpark,fc,60);fc=0;ft=n;}"
 + "  overlay.style.display='none';stxt.textContent='Live';"
 + "}"
 + "function onErr(){"
@@ -1486,7 +1511,39 @@ public class MiroirService extends Service {
 + "  ovtxt.textContent='Retry in '+(delay/1000|0)+'s';"
 + "  vTimer=setTimeout(function(){ovtxt.textContent='Connecting...';connectVideo();},delay);"
 + "}"
++ "function onAbort(){"
++ "  if(!vTimer){"
++ "    vRetry=0;"
++ "    ovtxt.textContent='Connection lost...';"
++ "    overlay.style.display='flex';"
++ "    connectVideo();"
++ "  }"
++ "}"
++ "function checkFrameStall(){"
++ "  if(!si || si.readyState!==2) return;"
++ "  try{"
++ "    var canvas=document.createElement('canvas');"
++ "    canvas.width=16;canvas.height=16;"
++ "    var ctx=canvas.getContext('2d');"
++ "    ctx.drawImage(si,0,0,16,16);"
++ "    var data=ctx.getImageData(0,0,16,16).data;"
++ "    var hash='';"
++ "    for(var i=0;i<data.length;i+=4){hash+=data[i]+','+data[i+1]+','+data[i+2]+';';}"
++ "    if(lastFrameHash && hash===lastFrameHash){"
++ "      if(Date.now()-lastFrameTime>5000 && !vTimer){"
++ "        console.log('Frame stall detected, reconnecting...');"
++ "        onAbort();"
++ "        return;"
++ "      }"
++ "    }else{"
++ "      lastFrameHash=hash;"
++ "      lastFrameTime=Date.now();"
++ "    }"
++ "  }catch(e){}"
++ "}"
++ "setInterval(checkFrameStall,1000);"
 + "connectVideo();"
++ "function drawSpark(c,v,m){if(!c)return;var x=c.getContext('2d');if(!x)return;var lastV=parseFloat(c.dataset.lastV||'0');if(Math.abs(v-lastV)<m*0.02)return;c.dataset.lastV=String(v);if(!c.dataset.hist)c.dataset.hist=JSON.stringify([]);var h=JSON.parse(c.dataset.hist);h.push(v);if(h.length>50)h.shift();c.dataset.hist=JSON.stringify(h);x.clearRect(0,0,c.width,c.height);x.strokeStyle='#4f8ef7';x.lineWidth=1;x.beginPath();for(var i=0;i<h.length;i++){var px=(i/h.length)*c.width;var py=c.height-(h[i]/m)*c.height;if(i===0)x.moveTo(px,py);else x.lineTo(px,py);}x.stroke();}"
 + "(function sse(){"
 + "  var es=new EventSource('/events'+(PIN?('?pin='+PIN):''));"
 + "  es.onmessage=function(e){"

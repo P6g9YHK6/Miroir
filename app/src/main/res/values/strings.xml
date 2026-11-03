@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Miroir</string>
+
+    <!-- Shortcuts -->
+    <string name="shortcut_start_stream">Start Stream</string>
+    <string name="shortcut_start_stream_long">Start screen streaming</string>
+    <string name="shortcut_stop_stream">Stop Stream</string>
+    <string name="shortcut_stop_stream_long">Stop screen streaming</string>
+    <string name="shortcut_presentation">Presentation</string>
+    <string name="shortcut_presentation_long">Start streaming (Presentation mode)</string>
+    <string name="shortcut_gaming">Gaming</string>
+    <string name="shortcut_gaming_long">Start streaming (Gaming mode)</string>
+    <string name="shortcut_dashboard">Dashboard</string>
+    <string name="shortcut_dashboard_long">Start streaming (Dashboard mode)</string>
+    <string name="shortcut_low_bandwidth">Low Bandwidth</string>
+    <string name="shortcut_low_bandwidth_long">Start streaming (Low Bandwidth mode)</string>
 </resources>
