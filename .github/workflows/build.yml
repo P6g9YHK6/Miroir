@@ -24,7 +24,7 @@ jobs:
           cache: gradle
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
         with:
           api-level: 34
           ndk-version: r26d
@@ -50,7 +50,7 @@ jobs:
           cache: gradle
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
         with:
           api-level: 34
           ndk-version: r26d
@@ -85,7 +85,7 @@ jobs:
           cache: gradle
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
         with:
           api-level: 34
           ndk-version: r26d
@@ -149,7 +149,7 @@ jobs:
           cache: gradle
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
         with:
           api-level: 34
           ndk-version: r26d
