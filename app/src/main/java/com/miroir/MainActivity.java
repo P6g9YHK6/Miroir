@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         LOW_BANDWIDTH
     }
 
-    private TextView tvStatus, tvQuality, tvFpsLabel, tvPin, tvPinSimple;
+    private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin, tvPinSimple;
     private Button   btnToggle, btnFps5, btnFps10, btnFps15, btnFps24, btnFps30, btnFps60;
     private Button   btnPinRegen, btnPinRegenSimple, btnBasicRegen, btnBasicRegenSimple;
     private SeekBar      seekBarQuality;
@@ -335,6 +335,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindViewsAndListeners() {
         tvStatus          = findViewById(R.id.tv_status);
+        tvUrl             = findViewById(R.id.tv_url);
+        tvUrlLabel        = findViewById(R.id.tv_url_label);
+        tvUrlHint         = findViewById(R.id.tv_url_hint);
         tvQuality         = findViewById(R.id.tv_quality);
         tvFpsLabel        = findViewById(R.id.tv_fps_label);
         btnToggle         = findViewById(R.id.btn_toggle);
@@ -432,11 +435,14 @@ public class MainActivity extends AppCompatActivity {
         btnPresetLowBW.setOnClickListener(v -> applyPreset(Preset.LOW_BANDWIDTH));
 
         btnToggle.setOnClickListener(v -> { if (isStreaming) stopStreaming(); else requestCapturePermission(); });
+        tvUrl.setOnClickListener(v -> shareUrl());
+        tvUrl.setOnLongClickListener(v -> { openInBrowser(); return true; });
         spinnerIps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
                 String selected = (String) p.getItemAtPosition(pos);
                 if (selected != null && !selected.equals(currentUrl)) {
                     currentUrl = selected;
+                    tvUrl.setText(currentUrl);
                 }
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
@@ -599,6 +605,10 @@ public class MainActivity extends AppCompatActivity {
             spinnerIps.setSelection(urls.indexOf(currentUrl));
         }
 
+        tvUrl.setText(currentUrl);
+        tvUrl.setVisibility(View.VISIBLE);
+        tvUrlLabel.setVisibility(View.VISIBLE);
+        tvUrlHint.setVisibility(View.VISIBLE);
         btnQrCode.setVisibility(View.VISIBLE);
         spinnerIps.setVisibility(View.VISIBLE);
     }
@@ -1184,6 +1194,9 @@ public class MainActivity extends AppCompatActivity {
         tvStatus.setTextColor(getColor(R.color.gray));
         btnToggle.setText("Start Streaming");
         btnToggle.setBackgroundColor(getColor(R.color.colorPrimary));
+        tvUrl.setVisibility(View.GONE);
+        tvUrlLabel.setVisibility(View.GONE);
+        tvUrlHint.setVisibility(View.GONE);
         spinnerIps.setVisibility(View.GONE);
         btnQrCode.setVisibility(View.GONE);
         currentUrl = "";
