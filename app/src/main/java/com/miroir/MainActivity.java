@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -814,11 +815,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter(MiroirService.ACTION_STOPPED);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(stoppedReceiver, filter, RECEIVER_NOT_EXPORTED);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // RECEIVER_NOT_EXPORTED constant added in API 26
+            registerReceiver(stoppedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
             registerReceiver(stoppedReceiver, filter);
         }

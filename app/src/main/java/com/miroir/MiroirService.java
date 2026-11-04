@@ -307,7 +307,7 @@ public class MiroirService extends Service {
                     ErrorReporter.get().warn(ErrorReporter.Source.SCREEN_CAPTURE,
                         "MediaProjection stopped by system");
                     stopCapture();
-                    sendBroadcast(new Intent(ACTION_STOPPED));
+                    sendBroadcast(new Intent(ACTION_STOPPED).setPackage(getPackageName()));
                     stopSelf();
                 }
             }, imageHandler);
