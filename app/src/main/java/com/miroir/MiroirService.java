@@ -97,6 +97,10 @@ public class MiroirService extends Service {
     public static final String EXTRA_HTTPS       = "EXTRA_HTTPS";
     public static final String EXTRA_KEEP_AWAKE  = "EXTRA_KEEP_AWAKE";
 
+    public static final String EXTRA_MAX_WIDTH  = "EXTRA_MAX_WIDTH";
+    public static final String EXTRA_MAX_HEIGHT = "EXTRA_MAX_HEIGHT";
+    public static final String EXTRA_BITRATE = "EXTRA_BITRATE";
+
     // v2: the original key was generated declaring three digests (SHA-256/384/512).
     // Some KeyMint/StrongBox TEE implementations (confirmed via logcat on a real
     // device: Keystore2 threw Error::Km(INCOMPATIBLE_DIGEST) from inside Conscrypt's
@@ -118,6 +122,10 @@ public class MiroirService extends Service {
     private static final AtomicInteger  audioSampleRate = new AtomicInteger(44100);
     private static final AtomicInteger  audioChannels   = new AtomicInteger(2);
     private static final AtomicInteger  audioEncoding   = new AtomicInteger(android.media.AudioFormat.ENCODING_PCM_16BIT);
+
+    private static final AtomicInteger  maxWidth      = new AtomicInteger(1280);
+    private static final AtomicInteger  maxHeight     = new AtomicInteger(720);
+    private static final AtomicInteger  bitrate       = new AtomicInteger(4000); // kbps
 
     private static final AtomicReference<AuthMode> authMode    = new AtomicReference<>(AuthMode.NONE);
     private static final AtomicReference<String>   requiredPin = new AtomicReference<>("");
@@ -266,6 +274,10 @@ public class MiroirService extends Service {
             setBasicCredentials(intent.getStringExtra(EXTRA_BASIC_USER), intent.getStringExtra(EXTRA_BASIC_PASS));
 
             if (intent.getBooleanExtra(EXTRA_KEEP_AWAKE, true)) acquireWakeLock();
+
+            maxWidth.set(intent.getIntExtra(EXTRA_MAX_WIDTH, 1280));
+            maxHeight.set(intent.getIntExtra(EXTRA_MAX_HEIGHT, 720));
+            bitrate.set(intent.getIntExtra(EXTRA_BITRATE, 4000));
 
             startForeground(NOTIFICATION_ID, buildNotification(savedPort));
 
@@ -513,10 +525,17 @@ public class MiroirService extends Service {
 
         int longEdge  = Math.max(rawW, rawH);
         int shortEdge = Math.min(rawW, rawH);
-        if (longEdge > MAX_WIDTH) {
-            float scale = (float) MAX_WIDTH / longEdge;
-            longEdge  = MAX_WIDTH;
+        int maxW = maxWidth.get();
+        int maxH = maxHeight.get();
+        if (longEdge > maxW) {
+            float scale = (float) maxW / longEdge;
+            longEdge  = maxW;
             shortEdge = Math.round(shortEdge * scale);
+        }
+        if (shortEdge > maxH) {
+            float scale = (float) maxH / shortEdge;
+            shortEdge = maxH;
+            longEdge  = Math.round(longEdge * scale);
         }
         capWidth  = ((rawW >= rawH) ? longEdge  : shortEdge) & ~1;
         capHeight = ((rawW >= rawH) ? shortEdge : longEdge)  & ~1;

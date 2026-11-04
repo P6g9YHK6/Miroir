@@ -8,6 +8,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
@@ -22,11 +25,34 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.annotation.SuppressLint;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import androidx.appcompat.widget.SwitchCompat;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Writer;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.common.BitMatrix;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -59,17 +85,24 @@ public class MainActivity extends AppCompatActivity {
         LOW_BANDWIDTH
     }
 
-    private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin;
+    private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin, tvPinSimple;
     private Button   btnToggle, btnFps5, btnFps10, btnFps15, btnFps24, btnFps30, btnFps60;
-    private Button   btnPinRegen, btnBasicRegen;
+    private Button   btnPinRegen, btnPinRegenSimple, btnBasicRegen, btnBasicRegenSimple;
     private SeekBar      seekBarQuality;
     private SwitchCompat switchAudio;
     private SwitchCompat switchAutoRestart;
-    private SwitchCompat switchHttps;
+    private SwitchCompat switchHttps, switchHttpsSimple;
     private SwitchCompat switchKeepAwake;
-    private Spinner  spinnerSampleRate, spinnerChannels, spinnerEncoding, spinnerAuthMode;
-    private EditText editPort, editBasicUser, editBasicPass;
-    private View     layoutPinRow, layoutBasicRow;
+    private Button     btnTabSimple, btnTabAdvanced;
+    private LinearLayout layoutSimple, layoutAdvanced, layoutProfileSettings;
+    private Button     btnPresetPres, btnPresetGaming, btnPresetDashboard, btnPresetLowBW;
+    private Spinner  spinnerSampleRate, spinnerChannels, spinnerEncoding, spinnerAuthMode, spinnerIps;
+    private Spinner  spinnerSampleRateSimple, spinnerChannelsSimple, spinnerEncodingSimple, spinnerAuthModeSimple;
+    private Spinner  spinnerResolution, spinnerBitrate;
+    private Spinner  spinnerResolutionAdv, spinnerBitrateAdv;
+    private ImageButton  btnQrCode;
+    private EditText editPort, editBasicUser, editBasicPass, editBasicUserSimple, editBasicPassSimple;
+    private View     layoutPinRow, layoutPinRowSimple, layoutBasicRow, layoutBasicRowSimple;
 
     private Settings settings;
 
@@ -83,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
     private int     selectedChannels   = 2;
     private int     selectedEncoding   = AudioFormat.ENCODING_PCM_16BIT;
     private int     selectedPort       = DEFAULT_PORT;
+    private int     maxWidthPref     = 1280;
+    private int     maxHeightPref    = 720;
+    private int     bitratePref      = 4000; // kbps
     private String  currentUrl         = "";
 
     private MiroirService.AuthMode authMode  = MiroirService.AuthMode.NONE;
@@ -201,16 +237,30 @@ public class MainActivity extends AppCompatActivity {
                 editPort.setText("8080");
                 spinnerAuthMode.setSelection(0); // None
                 switchKeepAwake.setChecked(true);
+                // Video: 1280x720 (720p), 4 Mbps
+                maxWidthPref = 1280; maxHeightPref = 720; bitratePref = 4000;
+                updateResolutionSpinner(1280, 720);
+                updateBitrateSpinner(4000);
+                // Audio defaults (44.1kHz, stereo, 16-bit)
+                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2); spinnerSampleRateSimple.setSelection(2);
+                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
                 break;
             case GAMING:
                 setFps(60);
                 seekBarQuality.setProgress(85);
                 switchAudio.setChecked(true);
-                spinnerSampleRate.setSelection(3); // 48kHz
-                spinnerChannels.setSelection(1); // Stereo
                 editPort.setText("8080");
                 spinnerAuthMode.setSelection(0); // None
                 switchKeepAwake.setChecked(true);
+                // Video: 1920x1080 (1080p), 8 Mbps
+                maxWidthPref = 1920; maxHeightPref = 1080; bitratePref = 8000;
+                updateResolutionSpinner(1920, 1080);
+                updateBitrateSpinner(8000);
+                // Audio: 48kHz, stereo, 16-bit
+                selectedSampleRate = 48000; spinnerSampleRate.setSelection(3); spinnerSampleRateSimple.setSelection(3);
+                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
                 break;
             case DASHBOARD:
                 setFps(5);
@@ -219,6 +269,14 @@ public class MainActivity extends AppCompatActivity {
                 editPort.setText("8080");
                 spinnerAuthMode.setSelection(0); // None
                 switchKeepAwake.setChecked(true);
+                // Video: 1280x720 (720p), 2 Mbps
+                maxWidthPref = 1280; maxHeightPref = 720; bitratePref = 2000;
+                updateResolutionSpinner(1280, 720);
+                updateBitrateSpinner(2000);
+                // Audio defaults
+                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2); spinnerSampleRateSimple.setSelection(2);
+                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
                 break;
             case LOW_BANDWIDTH:
                 setFps(10);
@@ -227,7 +285,48 @@ public class MainActivity extends AppCompatActivity {
                 editPort.setText("8080");
                 spinnerAuthMode.setSelection(0); // None
                 switchKeepAwake.setChecked(false);
+                // Video: 854x480 (480p), 1 Mbps
+                maxWidthPref = 854; maxHeightPref = 480; bitratePref = 1000;
+                updateResolutionSpinner(854, 480);
+                updateBitrateSpinner(1000);
+                // Audio defaults
+                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2); spinnerSampleRateSimple.setSelection(2);
+                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
                 break;
+        }
+    }
+
+    private void updateResolutionSpinner(int w, int h) {
+        String target = w + "x" + h;
+        // Update both simple and advanced spinners
+        for (int i = 0; i < spinnerResolution.getCount(); i++) {
+            if (spinnerResolution.getItemAtPosition(i).toString().contains(w + "x" + h)) {
+                spinnerResolution.setSelection(i);
+                break;
+            }
+        }
+        for (int i = 0; i < spinnerResolutionAdv.getCount(); i++) {
+            if (spinnerResolutionAdv.getItemAtPosition(i).toString().contains(w + "x" + h)) {
+                spinnerResolutionAdv.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    private void updateBitrateSpinner(int kbps) {
+        String target = kbps + " kbps";
+        for (int i = 0; i < spinnerBitrate.getCount(); i++) {
+            if (spinnerBitrate.getItemAtPosition(i).toString().contains(kbps + "")) {
+                spinnerBitrate.setSelection(i);
+                break;
+            }
+        }
+        for (int i = 0; i < spinnerBitrateAdv.getCount(); i++) {
+            if (spinnerBitrateAdv.getItemAtPosition(i).toString().contains(kbps + "")) {
+                spinnerBitrateAdv.setSelection(i);
+                break;
+            }
         }
     }
 
@@ -252,26 +351,81 @@ public class MainActivity extends AppCompatActivity {
         btnFps24          = findViewById(R.id.btn_fps_24);
         btnFps30          = findViewById(R.id.btn_fps_30);
         btnFps60          = findViewById(R.id.btn_fps_60);
-        spinnerAuthMode   = findViewById(R.id.spinner_auth_mode);
-        layoutPinRow      = findViewById(R.id.layout_pin_row);
-        layoutBasicRow    = findViewById(R.id.layout_basic_row);
-        tvPin             = findViewById(R.id.tv_pin);
-        btnPinRegen       = findViewById(R.id.btn_pin_regen);
-        btnBasicRegen     = findViewById(R.id.btn_basic_regen);
-        editBasicUser     = findViewById(R.id.edit_basic_user);
-        editBasicPass     = findViewById(R.id.edit_basic_pass);
-        switchHttps        = findViewById(R.id.switch_https);
+        spinnerAuthMode        = findViewById(R.id.spinner_auth_mode);
+        spinnerAuthModeSimple = findViewById(R.id.spinner_auth_mode_simple);
+        layoutPinRow          = findViewById(R.id.layout_pin_row);
+        layoutPinRowSimple    = findViewById(R.id.layout_pin_row_simple);
+        layoutBasicRow        = findViewById(R.id.layout_basic_row);
+        layoutBasicRowSimple  = findViewById(R.id.layout_basic_row_simple);
+        tvPin                 = findViewById(R.id.tv_pin);
+        tvPinSimple           = findViewById(R.id.tv_pin_simple);
+        btnPinRegen           = findViewById(R.id.btn_pin_regen);
+        btnPinRegenSimple     = findViewById(R.id.btn_pin_regen_simple);
+        btnBasicRegen         = findViewById(R.id.btn_basic_regen);
+        btnBasicRegenSimple   = findViewById(R.id.btn_basic_regen_simple);
+        editBasicUser         = findViewById(R.id.edit_basic_user);
+        editBasicUserSimple   = findViewById(R.id.edit_basic_user_simple);
+        editBasicPass         = findViewById(R.id.edit_basic_pass);
+        editBasicPassSimple   = findViewById(R.id.edit_basic_pass_simple);
+        switchHttps            = findViewById(R.id.switch_https);
+        switchHttpsSimple      = findViewById(R.id.switch_https_simple);
         switchKeepAwake    = findViewById(R.id.switch_keep_awake);
+        btnTabSimple       = findViewById(R.id.btn_tab_simple);
+        btnTabAdvanced     = findViewById(R.id.btn_tab_advanced);
+        layoutSimple       = findViewById(R.id.layout_simple);
+        layoutAdvanced     = findViewById(R.id.layout_advanced);
+        btnPresetPres      = findViewById(R.id.btn_preset_presentation);
+        btnPresetGaming    = findViewById(R.id.btn_preset_gaming);
+        btnPresetDashboard = findViewById(R.id.btn_preset_dashboard);
+        btnPresetLowBW     = findViewById(R.id.btn_preset_low_bandwidth);
+        spinnerIps         = findViewById(R.id.spinner_ips);
+        btnQrCode          = findViewById(R.id.btn_qr_code);
+        spinnerSampleRateSimple = findViewById(R.id.spinner_sample_rate_simple);
+        spinnerChannelsSimple = findViewById(R.id.spinner_channels_simple);
+        spinnerEncodingSimple = findViewById(R.id.spinner_encoding_simple);
+        spinnerResolution    = findViewById(R.id.spinner_resolution);
+        spinnerBitrate       = findViewById(R.id.spinner_bitrate);
+        spinnerResolutionAdv = findViewById(R.id.spinner_resolution_adv);
+        spinnerBitrateAdv    = findViewById(R.id.spinner_bitrate_adv);
+        layoutProfileSettings = findViewById(R.id.layout_profile_settings);
 
         setupQuality();
         setupFps();
         setupAudio();
         setupSpinners();
+        setupResolution();
+        setupBitrate();
+        setupSimpleAudio();
         setupPort();
         setupAutoRestart();
         setupAuth();
         setupHttps();
         setupKeepAwake();
+        setupIps();
+
+        // Tab switching
+        btnTabSimple.setOnClickListener(v -> {
+            layoutSimple.setVisibility(View.VISIBLE);
+            layoutAdvanced.setVisibility(View.GONE);
+            btnTabSimple.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+            btnTabSimple.setTextColor(Color.WHITE);
+            btnTabAdvanced.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#1e1e2e")));
+            btnTabAdvanced.setTextColor(Color.parseColor("#e2e2f0"));
+        });
+        btnTabAdvanced.setOnClickListener(v -> {
+            layoutSimple.setVisibility(View.GONE);
+            layoutAdvanced.setVisibility(View.VISIBLE);
+            btnTabAdvanced.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+            btnTabAdvanced.setTextColor(Color.WHITE);
+            btnTabSimple.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#1e1e2e")));
+            btnTabSimple.setTextColor(Color.parseColor("#e2e2f0"));
+        });
+
+        // Preset buttons
+        btnPresetPres.setOnClickListener(v -> applyPreset(Preset.PRESENTATION));
+        btnPresetGaming.setOnClickListener(v -> applyPreset(Preset.GAMING));
+        btnPresetDashboard.setOnClickListener(v -> applyPreset(Preset.DASHBOARD));
+        btnPresetLowBW.setOnClickListener(v -> applyPreset(Preset.LOW_BANDWIDTH));
 
         btnToggle.setOnClickListener(v -> { if (isStreaming) stopStreaming(); else requestCapturePermission(); });
         tvUrl.setOnClickListener(v -> shareUrl());
@@ -359,6 +513,122 @@ public class MainActivity extends AppCompatActivity {
             keepAwake = checked;
             settings.putBoolean(Settings.KEY_KEEP_AWAKE, checked);
         });
+    }
+
+    private void setupIps() {
+        List<String> allIps = getAllLocalIps();
+        if (allIps.isEmpty()) {
+            spinnerIps.setVisibility(View.GONE);
+            return;
+        }
+        ArrayAdapter<String> ipAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, allIps);
+        ipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerIps.setAdapter(ipAdapter);
+        spinnerIps.setVisibility(View.VISIBLE);
+        
+        // Select the preferred IP (wlan first, then others)
+        String preferredIp = getLocalIpAddress();
+        int selectedIndex = allIps.indexOf(preferredIp);
+        if (selectedIndex >= 0) {
+            spinnerIps.setSelection(selectedIndex);
+        }
+        
+        spinnerIps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedIp = allIps.get(position);
+                updateUrlDisplay(selectedIp);
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        
+        // QR code button
+        btnQrCode.setOnClickListener(v -> showQrCodeDialog(allIps.get(spinnerIps.getSelectedItemPosition())));
+    }
+
+    private List<String> getAllLocalIps() {
+        List<String> ips = new ArrayList<>();
+        try {
+            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                String ifaceName = iface.getName().toLowerCase(Locale.ROOT);
+                if (ifaceName.contains("tun") || ifaceName.contains("tap") ||
+                    ifaceName.contains("vpn") || ifaceName.contains("ppp") ||
+                    ifaceName.contains("docker") || ifaceName.contains("veth") ||
+                    ifaceName.equals("lo") || ifaceName.startsWith("lo:")) {
+                    continue;
+                }
+                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+                    String host = addr.getHostAddress();
+                    if (addr.isLoopbackAddress() || host == null || host.contains(":")) continue;
+                    if (!ips.contains(host)) ips.add(host);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "IP error", e);
+        }
+        return ips;
+    }
+
+    private void updateUrlDisplay(String ip) {
+        String protocol = httpsEnabled ? "https" : "http";
+        String url = protocol + "://" + ip + ":" + selectedPort;
+        currentUrl = url;
+        tvUrl.setText(url);
+        tvUrl.setVisibility(View.VISIBLE);
+        tvUrlLabel.setVisibility(View.VISIBLE);
+        tvUrlHint.setVisibility(View.VISIBLE);
+        btnQrCode.setVisibility(View.VISIBLE);
+        spinnerIps.setVisibility(View.VISIBLE);
+    }
+
+    private void showQrCodeDialog(String ip) {
+        String protocol = httpsEnabled ? "https" : "http";
+        String url = protocol + "://" + ip + ":" + selectedPort;
+        
+        try {
+            com.google.zxing.Writer writer = new com.google.zxing.qrcode.QRCodeWriter();
+            com.google.zxing.common.BitMatrix bitMatrix = writer.encode(
+                url, com.google.zxing.BarcodeFormat.QR_CODE, 400, 400);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("QR Code for " + ip);
+            ImageView imageView = new ImageView(this);
+            imageView.setImageBitmap(bitmap);
+            imageView.setPadding(40, 20, 40, 20);
+            builder.setView(imageView);
+            builder.setPositiveButton("Share", (d, w) -> {
+                // Save bitmap to file and share
+                try {
+                    File cacheDir = getCacheDir();
+                    File file = File.createTempFile("miroir_qr_", ".png", cacheDir);
+                    FileOutputStream fos = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.close();
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("image/png");
+                    Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                        this, getPackageName() + ".fileprovider", file);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(Intent.createChooser(shareIntent, "Share QR Code"));
+                } catch (Exception e) {
+                    Toast.makeText(this, "Failed to share QR code", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNegativeButton("Close", null);
+            builder.show();
+        } catch (Exception e) {
+            Log.e(TAG, "QR code generation failed", e);
+            Toast.makeText(this, "Failed to generate QR code", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String getLocalIpAddress() {
@@ -487,6 +757,129 @@ public class MainActivity extends AppCompatActivity {
             if (values[i] == target) return i;
         }
         return fallback;
+    }
+
+    private void setupResolution() {
+        String[] resLabels = {"854x480 (480p)", "1280x720 (720p)", "1920x1080 (1080p)"};
+        int[][] resValues = {{854, 480}, {1280, 720}, {1920, 1080}};
+
+        ArrayAdapter<String> resAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, resLabels);
+        resAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerResolution.setAdapter(resAdapter);
+        spinnerResolutionAdv.setAdapter(resAdapter);
+
+        int savedW = settings.getInt(Settings.KEY_MAX_WIDTH, 1280);
+        int savedH = settings.getInt(Settings.KEY_MAX_HEIGHT, 720);
+        int idx = indexOfResolution(resValues, savedW, savedH, 1);
+        spinnerResolution.setSelection(idx);
+        spinnerResolutionAdv.setSelection(idx);
+
+        AdapterView.OnItemSelectedListener resListener = new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                maxWidthPref = resValues[pos][0];
+                maxHeightPref = resValues[pos][1];
+                settings.putInt(Settings.KEY_MAX_WIDTH, maxWidthPref);
+                settings.putInt(Settings.KEY_MAX_HEIGHT, maxHeightPref);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        };
+        spinnerResolution.setOnItemSelectedListener(resListener);
+        spinnerResolutionAdv.setOnItemSelectedListener(resListener);
+    }
+
+    private int indexOfResolution(int[][] values, int w, int h, int fallback) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i][0] == w && values[i][1] == h) return i;
+        }
+        return fallback;
+    }
+
+    private void setupBitrate() {
+        String[] brLabels = {"1000 kbps (low)", "2000 kbps (med)", "4000 kbps (high)", "6000 kbps (very high)", "8000 kbps (max)"};
+        int[] brValues = {1000, 2000, 4000, 6000, 8000};
+
+        ArrayAdapter<String> brAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, brLabels);
+        brAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerBitrate.setAdapter(brAdapter);
+        spinnerBitrateAdv.setAdapter(brAdapter);
+
+        int savedB = settings.getInt(Settings.KEY_BITRATE, 4000);
+        int idx = indexOf(brValues, savedB, 2);
+        spinnerBitrate.setSelection(idx);
+        spinnerBitrateAdv.setSelection(idx);
+
+        AdapterView.OnItemSelectedListener brListener = new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                bitratePref = brValues[pos];
+                settings.putInt(Settings.KEY_BITRATE, bitratePref);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        };
+        spinnerBitrate.setOnItemSelectedListener(brListener);
+        spinnerBitrateAdv.setOnItemSelectedListener(brListener);
+    }
+
+    private void setupSimpleAudio() {
+        String[] srLabels = {"16 kHz (low bandwidth)", "22 kHz (FM quality)",
+                "44.1 kHz (CD quality)",  "48 kHz (studio)"};
+        int[]    srValues = {16000, 22050, 44100, 48000};
+
+        ArrayAdapter<String> srAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, srLabels);
+        srAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSampleRateSimple.setAdapter(srAdapter);
+        selectedSampleRate = settings.getInt(Settings.KEY_AUDIO_SAMPLE_RATE, 44100);
+        spinnerSampleRateSimple.setSelection(indexOf(srValues, selectedSampleRate, 2));
+        spinnerSampleRateSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                selectedSampleRate = srValues[pos];
+                MiroirService.setAudioSampleRate(selectedSampleRate);
+                settings.putInt(Settings.KEY_AUDIO_SAMPLE_RATE, selectedSampleRate);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
+
+        String[] chLabels = {"Mono", "Stereo"};
+        int[]    chValues = {1, 2};
+
+        ArrayAdapter<String> chAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, chLabels);
+        chAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerChannelsSimple.setAdapter(chAdapter);
+        selectedChannels = settings.getInt(Settings.KEY_AUDIO_CHANNELS, 2);
+        spinnerChannelsSimple.setSelection(indexOf(chValues, selectedChannels, 1));
+        spinnerChannelsSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                selectedChannels = chValues[pos];
+                MiroirService.setAudioChannels(selectedChannels);
+                settings.putInt(Settings.KEY_AUDIO_CHANNELS, selectedChannels);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
+
+        String[] encLabels = {"PCM 16-bit (standard)", "PCM 8-bit (small)", "PCM Float (high quality)"};
+        int[]    encValues = {
+                AudioFormat.ENCODING_PCM_16BIT,
+                AudioFormat.ENCODING_PCM_8BIT,
+                AudioFormat.ENCODING_PCM_FLOAT
+        };
+
+        ArrayAdapter<String> encAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, encLabels);
+        encAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEncodingSimple.setAdapter(encAdapter);
+        selectedEncoding = settings.getInt(Settings.KEY_AUDIO_ENCODING, AudioFormat.ENCODING_PCM_16BIT);
+        spinnerEncodingSimple.setSelection(indexOf(encValues, selectedEncoding, 0));
+        spinnerEncodingSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                selectedEncoding = encValues[pos];
+                MiroirService.setAudioEncoding(selectedEncoding);
+                settings.putInt(Settings.KEY_AUDIO_ENCODING, selectedEncoding);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
     }
 
     private void setupPort() {
@@ -678,6 +1071,9 @@ public class MainActivity extends AppCompatActivity {
         svc.putExtra(MiroirService.EXTRA_AUDIO_SR, selectedSampleRate);
         svc.putExtra(MiroirService.EXTRA_AUDIO_CH, selectedChannels);
         svc.putExtra(MiroirService.EXTRA_AUDIO_ENC, selectedEncoding);
+        svc.putExtra(MiroirService.EXTRA_MAX_WIDTH, maxWidthPref);
+        svc.putExtra(MiroirService.EXTRA_MAX_HEIGHT, maxHeightPref);
+        svc.putExtra(MiroirService.EXTRA_BITRATE, bitratePref);
         svc.putExtra(MiroirService.EXTRA_AUTH_MODE, authMode.name());
         svc.putExtra(MiroirService.EXTRA_PIN, currentPin);
         svc.putExtra(MiroirService.EXTRA_BASIC_USER, basicUser);

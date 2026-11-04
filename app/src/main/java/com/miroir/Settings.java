@@ -23,6 +23,10 @@ public class Settings {
     public static final String KEY_HTTPS_ENABLED        = "https_enabled";
     public static final String KEY_KEEP_AWAKE           = "keep_awake";
 
+    public static final String KEY_MAX_WIDTH            = "max_width";
+    public static final String KEY_MAX_HEIGHT           = "max_height";
+    public static final String KEY_BITRATE              = "bitrate";
+
     private final SharedPreferences prefs;
 
     public Settings(Context ctx) {

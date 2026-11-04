@@ -29,23 +29,148 @@
                 android:contentDescription="@string/app_name"
                 android:layout_marginEnd="8dp"/>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Miroir"
                 android:textColor="#e2e2f0"
                 android:textSize="26sp"
                 android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share your screen over local Wi-Fi"
+                android:textColor="#555570"
+                android:textSize="13sp"
+                android:gravity="end"/>
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Status card (above start button) -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Share your screen over local Wi-Fi"
-            android:textColor="#555570"
-            android:textSize="13sp"
-            android:layout_marginBottom="16dp"/>
+            app:cardBackgroundColor="#13131a"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STATUS"
+                    android:textColor="#555570"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.15"/>
+                <TextView
+                    android:id="@+id/tv_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STOPPED"
+                    android:textColor="#555570"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp"/>
+                <TextView
+                    android:id="@+id/tv_url_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OPEN IN BROWSER"
+                    android:textColor="#555570"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginTop="14dp"
+                    android:visibility="gone"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp">
+                    <TextView
+                        android:id="@+id/tv_url"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text=""
+                        android:textColor="#4f8ef7"
+                        android:textSize="17sp"
+                        android:fontFamily="monospace"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:visibility="gone"/>
+                    <ImageButton
+                        android:id="@+id/btn_qr_code"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@android:drawable/ic_menu_manage"
+                        android:contentDescription="Show QR code"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:visibility="gone"/>
+                </LinearLayout>
+                <Spinner
+                    android:id="@+id/spinner_ips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    android:backgroundTint="#4f8ef7"
+                    android:spinnerMode="dropdown"/>
+                <TextView
+                    android:id="@+id/tv_url_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tap to share  /  Long-press to open in browser"
+                    android:textColor="#33334a"
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        <!-- Start / Stop button (moved to top) -->
+        <!-- Tabs: Simple / Advanced -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+            <Button
+                android:id="@+id/btn_tab_simple"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="SIMPLE"
+                android:textColor="#ffffff"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/colorPrimary"
+                android:stateListAnimator="@null"
+                android:singleLine="false"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+            <Button
+                android:id="@+id/btn_tab_advanced"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="ADVANCED"
+                android:textColor="#e2e2f0"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:backgroundTint="#1e1e2e"
+                android:stateListAnimator="@null"
+                android:singleLine="false"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <!-- Start / Stop button -->
         <Button
             android:id="@+id/btn_toggle"
             android:layout_width="match_parent"
@@ -55,401 +180,246 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:backgroundTint="@color/colorPrimary"
-            android:stateListAnimator="@null"/>
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="16dp"/>
 
-        <!-- Quality card -->
-        <androidx.cardview.widget.CardView
+        <!-- Simple tab content: Profiles + Auth -->
+        <LinearLayout
+            android:id="@+id/layout_simple"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#13131a"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:layout_marginTop="12dp">
+            android:orientation="vertical"
+            android:visibility="visible">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRESETS"
+                android:textColor="#555570"
+                android:textSize="11sp"
+                android:letterSpacing="0.15"
+                android:layout_marginBottom="8dp"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="JPEG QUALITY"
-                        android:textColor="#555570"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.15"/>
-                    <TextView
-                        android:id="@+id/tv_quality"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="70%"
-                        android:textColor="#4f8ef7"
-                        android:textSize="14sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-                <SeekBar
-                    android:id="@+id/seekbar_quality"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:min="10"
-                    android:progressTint="#4f8ef7"
-                    android:thumbTint="#4f8ef7"/>
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="4">
+                <Button
+                    android:id="@+id/btn_preset_presentation"
+                    android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1"
+                    android:layout_marginEnd="4dp" android:text="Presentation" android:textColor="#e2e2f0"
+                    android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                    android:backgroundTint="#1e1e2e"
+                    android:singleLine="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+                <Button
+                    android:id="@+id/btn_preset_gaming"
+                    android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1"
+                    android:layout_marginEnd="4dp" android:text="Gaming" android:textColor="#e2e2f0"
+                    android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                    android:backgroundTint="#1e1e2e"
+                    android:singleLine="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+                <Button
+                    android:id="@+id/btn_preset_dashboard"
+                    android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1"
+                    android:layout_marginEnd="4dp" android:text="Dashboard" android:textColor="#e2e2f0"
+                    android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                    android:backgroundTint="#1e1e2e"
+                    android:singleLine="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+                <Button
+                    android:id="@+id/btn_preset_low_bandwidth"
+                    android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1"
+                    android:text="Low BW" android:textColor="#e2e2f0"
+                    android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                    android:backgroundTint="#1e1e2e"
+                    android:singleLine="false"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- FPS card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="#13131a"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:layout_marginTop="12dp">
+            <!-- Profile settings (shown below presets) -->
             <LinearLayout
+                android:id="@+id/layout_profile_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="18dp">
-                <LinearLayout
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+                
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <TextView
-                        android:layout_width="0dp"
+                    app:cardBackgroundColor="#13131a"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    android:layout_marginBottom="12dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="FRAME RATE"
-                        android:textColor="#555570"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.15"/>
-                    <TextView
-                        android:id="@+id/tv_fps_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="24 fps"
-                        android:textColor="#4f8ef7"
-                        android:textSize="14sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-                <LinearLayout
+                        android:orientation="vertical"
+                        android:padding="18dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="VIDEO"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:weightSum="2">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="RESOLUTION"
+                                    android:textColor="#555570"
+                                    android:textSize="11sp"
+                                    android:letterSpacing="0.15"/>
+                                <Spinner
+                                    android:id="@+id/spinner_resolution"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:backgroundTint="#4f8ef7"
+                                    android:spinnerMode="dropdown"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="BITRATE"
+                                    android:textColor="#555570"
+                                    android:textSize="11sp"
+                                    android:letterSpacing="0.15"/>
+                                <Spinner
+                                    android:id="@+id/spinner_bitrate"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:backgroundTint="#4f8ef7"
+                                    android:spinnerMode="dropdown"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center"
-                    android:weightSum="6">
-                    <Button android:id="@+id/btn_fps_5"
-                        android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
-                        android:layout_marginEnd="4dp" android:text="5" android:textColor="#e2e2f0"
-                        android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                    <Button android:id="@+id/btn_fps_10"
-                        android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
-                        android:layout_marginEnd="4dp" android:text="10" android:textColor="#e2e2f0"
-                        android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                    <Button android:id="@+id/btn_fps_15"
-                        android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
-                        android:layout_marginEnd="4dp" android:text="15" android:textColor="#e2e2f0"
-                        android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                    <Button android:id="@+id/btn_fps_24"
-                        android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
-                        android:layout_marginEnd="4dp" android:text="24" android:textColor="#e2e2f0"
-                        android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                    <Button android:id="@+id/btn_fps_30"
-                        android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
-                        android:layout_marginEnd="4dp" android:text="30" android:textColor="#e2e2f0"
-                        android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                    <Button android:id="@+id/btn_fps_60"
-                        android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
-                        android:text="60" android:textColor="#e2e2f0"
-                        android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                </LinearLayout>
+                    app:cardBackgroundColor="#13131a"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    android:layout_marginBottom="12dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AUDIO"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="SAMPLE RATE"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_sample_rate_simple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="12dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="CHANNELS"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_channels_simple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="12dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="ENCODING"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_encoding_simple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- Audio card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="#13131a"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:layout_marginTop="12dp">
-            <LinearLayout
+            <!-- Auth (always visible in Simple) -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
-
-                <!-- Audio toggle row -->
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginTop="12dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="STREAM AUDIO"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Capture device audio (Android 10+)"
-                            android:textColor="#33334a"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_audio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        app:thumbTint="#4f8ef7"
-                        app:trackTint="#1e1e40"/>
-                </LinearLayout>
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#1e1e2e"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"/>
-
-                <!-- Sample rate row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="SAMPLE RATE"
-                        android:textColor="#555570"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.15"/>
-                    <Spinner
-                        android:id="@+id/spinner_sample_rate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#4f8ef7"
-                        android:spinnerMode="dropdown"/>
-                </LinearLayout>
-
-                <!-- Channels row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="CHANNELS"
-                        android:textColor="#555570"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.15"/>
-                    <Spinner
-                        android:id="@+id/spinner_channels"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#4f8ef7"
-                        android:spinnerMode="dropdown"/>
-                </LinearLayout>
-
-                <!-- Codec row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="ENCODING"
-                        android:textColor="#555570"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.15"/>
-                    <Spinner
-                        android:id="@+id/spinner_encoding"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#4f8ef7"
-                        android:spinnerMode="dropdown"/>
-                </LinearLayout>
-
-                <!-- Port row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="14dp">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="HTTP PORT"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1 – 65535"
-                            android:textColor="#33334a"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <EditText
-                        android:id="@+id/edit_port"
-                        android:layout_width="90dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:text="8080"
-                        android:hint="8080"
-                        android:textColor="#e2e2f0"
-                        android:textColorHint="#555570"
-                        android:textSize="14sp"
-                        android:fontFamily="monospace"
-                        android:gravity="end"
-                        android:background="@android:color/transparent"
-                        android:paddingStart="4dp"
-                        android:paddingEnd="4dp"
-                        android:maxLength="5"
-                        android:singleLine="true"
-                        android:autofillHints=""/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#1e1e2e"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="AUTO-RESTART"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Restart stream on client/server interruption"
-                            android:textColor="#33334a"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_auto_restart"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        app:thumbTint="#4f8ef7"
-                        app:trackTint="#1e1e40"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#1e1e2e"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="KEEP SCREEN AWAKE"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Stay on while streaming, release when stopped"
-                            android:textColor="#33334a"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_keep_awake"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        app:thumbTint="#4f8ef7"
-                        app:trackTint="#1e1e40"/>
-                </LinearLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Security card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="#13131a"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:layout_marginTop="12dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
-
+                    android:orientation="vertical"
+                    android:padding="18dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -476,16 +446,15 @@
                             android:layout_marginTop="2dp"/>
                     </LinearLayout>
                     <Spinner
-                        android:id="@+id/spinner_auth_mode"
+                        android:id="@+id/spinner_auth_mode_simple"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="#4f8ef7"
                         android:spinnerMode="dropdown"/>
                 </LinearLayout>
 
-                <!-- PIN row -->
                 <LinearLayout
-                    android:id="@+id/layout_pin_row"
+                    android:id="@+id/layout_pin_row_simple"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -505,7 +474,7 @@
                             android:textSize="11sp"
                             android:letterSpacing="0.15"/>
                         <TextView
-                            android:id="@+id/tv_pin"
+                            android:id="@+id/tv_pin_simple"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="000000"
@@ -516,7 +485,7 @@
                             android:layout_marginTop="2dp"/>
                     </LinearLayout>
                     <Button
-                        android:id="@+id/btn_pin_regen"
+                        android:id="@+id/btn_pin_regen_simple"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:text="Regenerate"
@@ -526,9 +495,8 @@
                         android:backgroundTint="#1e1e2e"/>
                 </LinearLayout>
 
-                <!-- Basic Auth rows -->
                 <LinearLayout
-                    android:id="@+id/layout_basic_row"
+                    android:id="@+id/layout_basic_row_simple"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -548,7 +516,7 @@
                             android:textSize="11sp"
                             android:letterSpacing="0.15"/>
                         <EditText
-                            android:id="@+id/edit_basic_user"
+                            android:id="@+id/edit_basic_user_simple"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
                             android:inputType="text"
@@ -576,7 +544,7 @@
                             android:textSize="11sp"
                             android:letterSpacing="0.15"/>
                         <EditText
-                            android:id="@+id/edit_basic_pass"
+                            android:id="@+id/edit_basic_pass_simple"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
                             android:inputType="text"
@@ -634,96 +602,694 @@
                             android:layout_marginTop="2dp"/>
                     </LinearLayout>
                     <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_https"
+                        android:id="@+id/switch_https_simple"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="false"
                         app:thumbTint="#4f8ef7"
                         app:trackTint="#1e1e40"/>
                 </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Status card (compact, at bottom) -->
-        <androidx.cardview.widget.CardView
+        <!-- Advanced tab content: Settings -->
+        <LinearLayout
+            android:id="@+id/layout_advanced"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#13131a"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:layout_marginTop="12dp">
-            <LinearLayout
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Video Settings card -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VIDEO"
+                        android:textColor="#555570"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.15"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="2">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="JPEG QUALITY"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:id="@+id/tv_quality"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="70%"
+                                android:textColor="#4f8ef7"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp"/>
+                            <SeekBar
+                                android:id="@+id/seekbar_quality"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:min="10"
+                                android:progressTint="#4f8ef7"
+                                android:thumbTint="#4f8ef7"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="FRAME RATE"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:id="@+id/tv_fps_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="24 fps"
+                                android:textColor="#4f8ef7"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:layout_width="wrap_content"
+            <!-- FPS presets card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="STATUS"
-                    android:textColor="#555570"
-                    android:textSize="11sp"
-                    android:letterSpacing="0.15"/>
-                <TextView
-                    android:id="@+id/tv_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="STOPPED"
-                    android:textColor="#555570"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="2dp"/>
-                <TextView
-                    android:id="@+id/tv_url_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="OPEN IN BROWSER"
-                    android:textColor="#555570"
-                    android:textSize="11sp"
-                    android:letterSpacing="0.15"
-                    android:layout_marginTop="14dp"
-                    android:visibility="gone"/>
-                <TextView
-                    android:id="@+id/tv_url"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#4f8ef7"
-                    android:textSize="17sp"
-                    android:fontFamily="monospace"
-                    android:textStyle="bold"
-                    android:layout_marginTop="2dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
-                    android:visibility="gone"/>
-                <TextView
-                    android:id="@+id/tv_url_hint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tap to share  /  Long-press to open in browser"
-                    android:textColor="#33334a"
-                    android:textSize="11sp"
-                    android:layout_marginTop="2dp"
-                    android:visibility="gone"/>
+                    android:orientation="vertical"
+                    android:padding="18dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center"
+                        android:weightSum="6">
+                        <Button android:id="@+id/btn_fps_5"
+                            android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                            android:layout_marginEnd="4dp" android:text="5" android:textColor="#e2e2f0"
+                            android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                        <Button android:id="@+id/btn_fps_10"
+                            android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                            android:layout_marginEnd="4dp" android:text="10" android:textColor="#e2e2f0"
+                            android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                        <Button android:id="@+id/btn_fps_15"
+                            android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                            android:layout_marginEnd="4dp" android:text="15" android:textColor="#e2e2f0"
+                            android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                        <Button android:id="@+id/btn_fps_24"
+                            android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                            android:layout_marginEnd="4dp" android:text="24" android:textColor="#e2e2f0"
+                            android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                        <Button android:id="@+id/btn_fps_30"
+                            android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                            android:layout_marginEnd="4dp" android:text="30" android:textColor="#e2e2f0"
+                            android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                        <Button android:id="@+id/btn_fps_60"
+                            android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1"
+                            android:text="60" android:textColor="#e2e2f0"
+                            android:textSize="12sp" android:padding="0dp" android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            <!-- Video Settings card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VIDEO SETTINGS"
+                        android:textColor="#555570"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.15"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="2">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="RESOLUTION"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <Spinner
+                                android:id="@+id/spinner_resolution_adv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="#4f8ef7"
+                                android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="BITRATE"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <Spinner
+                                android:id="@+id/spinner_bitrate_adv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="#4f8ef7"
+                                android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Anyone on the same Wi-Fi can view the stream in any browser. No app required."
-            android:textColor="#2a2a40"
-            android:textSize="11sp"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.5"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="20dp"/>
+            <!-- Audio card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="STREAM AUDIO"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Capture device audio (Android 10+)"
+                                android:textColor="#33334a"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_audio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            app:thumbTint="#4f8ef7"
+                            app:trackTint="#1e1e40"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#1e1e2e"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="SAMPLE RATE"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_sample_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="CHANNELS"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_channels"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="ENCODING"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_encoding"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="14dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="HTTP PORT"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1 – 65535"
+                                android:textColor="#33334a"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <EditText
+                            android:id="@+id/edit_port"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:text="8080"
+                            android:hint="8080"
+                            android:textColor="#e2e2f0"
+                            android:textColorHint="#555570"
+                            android:textSize="14sp"
+                            android:fontFamily="monospace"
+                            android:gravity="end"
+                            android:background="@android:color/transparent"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            android:maxLength="5"
+                            android:singleLine="true"
+                            android:autofillHints=""/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#1e1e2e"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="AUTO-RESTART"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Restart stream on client/server interruption"
+                                android:textColor="#33334a"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_auto_restart"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            app:thumbTint="#4f8ef7"
+                            app:trackTint="#1e1e40"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#1e1e2e"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="KEEP SCREEN AWAKE"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Stay on while streaming, release when stopped"
+                                android:textColor="#33334a"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_keep_awake"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            app:thumbTint="#4f8ef7"
+                            app:trackTint="#1e1e40"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Security card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="AUTHENTICATION"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Off by default — anyone on the network can view"
+                                android:textColor="#33334a"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <Spinner
+                            android:id="@+id/spinner_auth_mode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
+                    </LinearLayout>
+
+                    <!-- PIN row -->
+                    <LinearLayout
+                        android:id="@+id/layout_pin_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="14dp"
+                        android:visibility="gone">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="PIN"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:id="@+id/tv_pin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="000000"
+                                android:textColor="#4f8ef7"
+                                android:textSize="18sp"
+                                android:fontFamily="monospace"
+                                android:textStyle="bold"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <Button
+                            android:id="@+id/btn_pin_regen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="Regenerate"
+                            android:textColor="#e2e2f0"
+                            android:textSize="12sp"
+                            android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"/>
+                    </LinearLayout>
+
+                    <!-- Basic Auth rows -->
+                    <LinearLayout
+                        android:id="@+id/layout_basic_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="14dp"
+                        android:visibility="gone">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="USERNAME"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <EditText
+                                android:id="@+id/edit_basic_user"
+                                android:layout_width="140dp"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:text="viewer"
+                                android:textColor="#e2e2f0"
+                                android:textSize="14sp"
+                                android:fontFamily="monospace"
+                                android:gravity="end"
+                                android:background="@android:color/transparent"
+                                android:singleLine="true"
+                                android:autofillHints=""/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="10dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="PASSWORD"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <EditText
+                                android:id="@+id/edit_basic_pass"
+                                android:layout_width="140dp"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:textColor="#e2e2f0"
+                                android:textSize="14sp"
+                                android:fontFamily="monospace"
+                                android:gravity="end"
+                                android:background="@android:color/transparent"
+                                android:singleLine="true"
+                                android:autofillHints=""/>
+                        </LinearLayout>
+                        <Button
+                            android:id="@+id/btn_basic_regen_simple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="Regenerate password"
+                            android:textColor="#e2e2f0"
+                            android:textSize="12sp"
+                            android:stateListAnimator="@null"
+                            android:backgroundTint="#1e1e2e"
+                            android:layout_marginTop="10dp"
+                            android:layout_gravity="end"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#1e1e2e"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="HTTPS"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Self-signed cert — browsers will show a security warning"
+                                android:textColor="#33334a"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_https"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            app:thumbTint="#4f8ef7"
+                            app:trackTint="#1e1e40"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
