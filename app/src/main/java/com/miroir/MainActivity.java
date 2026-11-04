@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
         LOW_BANDWIDTH
     }
 
-    private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin, tvUpdateStatus;
+    private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin;
     private Button   btnToggle, btnFps5, btnFps10, btnFps15, btnFps24, btnFps30, btnFps60;
-    private Button   btnPinRegen, btnBasicRegen, btnCheckUpdates;
+    private Button   btnPinRegen, btnBasicRegen;
     private SeekBar      seekBarQuality;
     private SwitchCompat switchAudio;
     private SwitchCompat switchAutoRestart;
@@ -262,8 +262,6 @@ public class MainActivity extends AppCompatActivity {
         editBasicPass     = findViewById(R.id.edit_basic_pass);
         switchHttps        = findViewById(R.id.switch_https);
         switchKeepAwake    = findViewById(R.id.switch_keep_awake);
-        btnCheckUpdates    = findViewById(R.id.btn_check_updates);
-        tvUpdateStatus     = findViewById(R.id.tv_update_status);
 
         setupQuality();
         setupFps();
@@ -274,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
         setupAuth();
         setupHttps();
         setupKeepAwake();
-        setupUpdateCheck();
 
         btnToggle.setOnClickListener(v -> { if (isStreaming) stopStreaming(); else requestCapturePermission(); });
         tvUrl.setOnClickListener(v -> shareUrl());
@@ -602,43 +599,6 @@ public class MainActivity extends AppCompatActivity {
             case 2:  return MiroirService.AuthMode.BASIC;
             default: return MiroirService.AuthMode.NONE;
         }
-    }
-
-    private void setupUpdateCheck() {
-        tvUpdateStatus.setText("Version " + BuildConfig.VERSION_NAME);
-        btnCheckUpdates.setOnClickListener(v -> runUpdateCheck());
-    }
-
-    private void runUpdateCheck() {
-        tvUpdateStatus.setText("Checking…");
-        UpdateChecker.checkForUpdate(new UpdateChecker.Callback() {
-            @Override public void onResult(boolean updateAvailable, String latestVersion) {
-                if (isFinishing() || isDestroyed()) return;
-                if (updateAvailable) {
-                    tvUpdateStatus.setText("Update available (" + latestVersion + ")");
-                    showUpdateAvailableDialog(latestVersion);
-                } else {
-                    tvUpdateStatus.setText("Up to date (" + BuildConfig.VERSION_NAME + ")");
-                    Toast.makeText(MainActivity.this, "You're on the latest version", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override public void onError(Exception e) {
-                if (isFinishing() || isDestroyed()) return;
-                tvUpdateStatus.setText("Update check failed");
-                Toast.makeText(MainActivity.this, "Couldn't check for updates", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void showUpdateAvailableDialog(String latestVersion) {
-        new AlertDialog.Builder(this)
-            .setTitle("Update available")
-            .setMessage("Version " + latestVersion + " is available on GitHub.\nThis build is "
-                + BuildConfig.VERSION_NAME + ".")
-            .setPositiveButton("View on GitHub", (d, w) -> startActivity(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/P6g9YHK6/Miroir/releases"))))
-            .setNegativeButton("Later", null)
-            .show();
     }
 
     private String generatePin() {

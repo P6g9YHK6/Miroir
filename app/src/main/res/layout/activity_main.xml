@@ -15,14 +15,27 @@
         android:padding="20dp"
         android:gravity="center_horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Compact title with icon -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Miroir"
-            android:textColor="#e2e2f0"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_marginTop="20dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_launcher"
+                android:contentDescription="@string/app_name"
+                android:layout_marginEnd="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Miroir"
+                android:textColor="#e2e2f0"
+                android:textSize="26sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,75 +43,19 @@
             android:text="Share your screen over local Wi-Fi"
             android:textColor="#555570"
             android:textSize="13sp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginBottom="16dp"/>
 
-        <!-- Status card -->
-        <androidx.cardview.widget.CardView
+        <!-- Start / Stop button (moved to top) -->
+        <Button
+            android:id="@+id/btn_toggle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="#13131a"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:layout_marginTop="24dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="STATUS"
-                    android:textColor="#555570"
-                    android:textSize="11sp"
-                    android:letterSpacing="0.15"/>
-                <TextView
-                    android:id="@+id/tv_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="STOPPED"
-                    android:textColor="#555570"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="2dp"/>
-                <TextView
-                    android:id="@+id/tv_url_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="OPEN IN BROWSER"
-                    android:textColor="#555570"
-                    android:textSize="11sp"
-                    android:letterSpacing="0.15"
-                    android:layout_marginTop="14dp"
-                    android:visibility="gone"/>
-                <TextView
-                    android:id="@+id/tv_url"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#4f8ef7"
-                    android:textSize="17sp"
-                    android:fontFamily="monospace"
-                    android:textStyle="bold"
-                    android:layout_marginTop="2dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
-                    android:visibility="gone"/>
-                <TextView
-                    android:id="@+id/tv_url_hint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tap to share  /  Long-press to open in browser"
-                    android:textColor="#33334a"
-                    android:textSize="11sp"
-                    android:layout_marginTop="2dp"
-                    android:visibility="gone"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:layout_height="56dp"
+            android:text="Start Streaming"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/colorPrimary"
+            android:stateListAnimator="@null"/>
 
         <!-- Quality card -->
         <androidx.cardview.widget.CardView
@@ -421,7 +378,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Re-request capture if stopped by system"
+                            android:text="Restart stream on client/server interruption"
                             android:textColor="#33334a"
                             android:textSize="11sp"
                             android:layout_marginTop="2dp"/>
@@ -688,7 +645,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Update card -->
+        <!-- Status card (compact, at bottom) -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -702,59 +659,60 @@
                 android:orientation="vertical"
                 android:padding="18dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="VERSION"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <TextView
-                            android:id="@+id/tv_update_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=""
-                            android:textColor="#33334a"
-                            android:textSize="11sp"
-                            android:fontFamily="monospace"
-                            android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <Button
-                        android:id="@+id/btn_check_updates"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Check Now"
-                        android:textColor="#e2e2f0"
-                        android:textSize="12sp"
-                        android:stateListAnimator="@null"
-                        android:backgroundTint="#1e1e2e"/>
-                </LinearLayout>
+                    android:text="STATUS"
+                    android:textColor="#555570"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.15"/>
+                <TextView
+                    android:id="@+id/tv_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STOPPED"
+                    android:textColor="#555570"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp"/>
+                <TextView
+                    android:id="@+id/tv_url_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OPEN IN BROWSER"
+                    android:textColor="#555570"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.15"
+                    android:layout_marginTop="14dp"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/tv_url"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#4f8ef7"
+                    android:textSize="17sp"
+                    android:fontFamily="monospace"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/tv_url_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tap to share  /  Long-press to open in browser"
+                    android:textColor="#33334a"
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <!-- Start / Stop button -->
-        <Button
-            android:id="@+id/btn_toggle"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Start Streaming"
-            android:textColor="#ffffff"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:backgroundTint="@color/colorPrimary"
-            android:stateListAnimator="@null"
-            android:layout_marginTop="20dp"/>
 
         <TextView
             android:layout_width="match_parent"
