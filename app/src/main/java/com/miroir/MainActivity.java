@@ -96,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
     private Button     btnTabSimple, btnTabAdvanced;
     private LinearLayout layoutSimple, layoutAdvanced, layoutProfileSettings;
     private Button     btnPresetPres, btnPresetGaming, btnPresetDashboard, btnPresetLowBW;
-    private Spinner  spinnerSampleRate, spinnerChannels, spinnerEncoding, spinnerAuthMode, spinnerIps;
+    private Spinner  spinnerSampleRate, spinnerChannels, spinnerEncoding, spinnerAuthMode;
+    private ImageButton btnIpDropdown;
     private Spinner  spinnerSampleRateSimple, spinnerChannelsSimple, spinnerEncodingSimple, spinnerAuthModeSimple, spinnerFpsSimple;
     private Spinner  spinnerResolution, spinnerBitrate;
     private Spinner  spinnerResolutionAdv, spinnerBitrateAdv;
@@ -356,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
         btnFps60          = findViewById(R.id.btn_fps_60);
         spinnerAuthMode        = findViewById(R.id.spinner_auth_mode);
         spinnerAuthModeSimple = findViewById(R.id.spinner_auth_mode_simple);
-        spinnerIps            = findViewById(R.id.spinner_ips);
+        btnIpDropdown         = findViewById(R.id.btn_ip_dropdown);
         layoutPinRow          = findViewById(R.id.layout_pin_row);
         layoutPinRowSimple    = findViewById(R.id.layout_pin_row_simple);
         layoutBasicRow        = findViewById(R.id.layout_basic_row);
@@ -382,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
         btnPresetGaming    = findViewById(R.id.btn_preset_gaming);
         btnPresetDashboard = findViewById(R.id.btn_preset_dashboard);
         btnPresetLowBW     = findViewById(R.id.btn_preset_low_bandwidth);
-        spinnerIps         = findViewById(R.id.spinner_ips);
+        btnIpDropdown      = findViewById(R.id.btn_ip_dropdown);
         btnQrCode          = findViewById(R.id.btn_qr_code);
         spinnerSampleRateSimple = findViewById(R.id.spinner_sample_rate_simple);
         spinnerChannelsSimple = findViewById(R.id.spinner_channels_simple);
@@ -437,16 +438,6 @@ public class MainActivity extends AppCompatActivity {
         btnToggle.setOnClickListener(v -> { if (isStreaming) stopStreaming(); else requestCapturePermission(); });
         tvUrl.setOnClickListener(v -> shareUrl());
         tvUrl.setOnLongClickListener(v -> { openInBrowser(); return true; });
-        spinnerIps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                String selected = (String) p.getItemAtPosition(pos);
-                if (selected != null && !selected.equals(currentUrl)) {
-                    currentUrl = selected;
-                    tvUrl.setText(currentUrl);
-                }
-            }
-            @Override public void onNothingSelected(AdapterView<?> p) {}
-        });
         btnQrCode.setOnClickListener(v -> showQrCode());
     }
 
@@ -536,32 +527,33 @@ public class MainActivity extends AppCompatActivity {
     private void setupIps() {
         List<String> allIps = getAllLocalIps();
         if (allIps.isEmpty()) {
-            spinnerIps.setVisibility(View.GONE);
+            btnIpDropdown.setVisibility(View.GONE);
             return;
         }
-        ArrayAdapter<String> ipAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, allIps);
-        ipAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerIps.setAdapter(ipAdapter);
-        spinnerIps.setVisibility(View.VISIBLE);
-        
-        // Select the preferred IP (wlan first, then others)
-        String preferredIp = getLocalIpAddress();
-        int selectedIndex = allIps.indexOf(preferredIp);
-        if (selectedIndex >= 0) {
-            spinnerIps.setSelection(selectedIndex);
-        }
-        
-        spinnerIps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedIp = allIps.get(position);
-                updateUrlDisplay(selectedIp);
+        btnIpDropdown.setVisibility(View.VISIBLE);
+
+        // Show popup menu on dropdown button click
+        btnIpDropdown.setOnClickListener(v -> {
+            android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+            for (int i = 0; i < allIps.size(); i++) {
+                String ip = allIps.get(i);
+                String protocol = httpsEnabled ? "https" : "http";
+                String displayText = protocol + "://" + ip + ":" + selectedPort;
+                if (ip.equals(getLocalIpAddress())) {
+                    displayText += " (current)";
+                }
+                popup.getMenu().add(0, i, i, displayText);
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+            popup.setOnMenuItemClickListener(item -> {
+                String selectedIp = allIps.get(item.getItemId());
+                updateUrlDisplay(selectedIp);
+                return true;
+            });
+            popup.show();
         });
-        
+
         // QR code button
-        btnQrCode.setOnClickListener(v -> showQrCodeDialog(allIps.get(spinnerIps.getSelectedItemPosition())));
+        btnQrCode.setOnClickListener(v -> showQrCodeDialog(getLocalIpAddress()));
     }
 
     private List<String> getAllLocalIps() {
@@ -589,34 +581,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUrlDisplay(String ip) {
         String protocol = httpsEnabled ? "https" : "http";
-        List<String> ips = getAllLocalIps();
-        List<String> urls = new ArrayList<>();
-        for (String addr : ips) {
-            urls.add(protocol + "://" + addr + ":" + selectedPort);
+        String url = protocol + "://" + ip + ":" + selectedPort;
+        if (authMode == MiroirService.AuthMode.PIN) {
+            url += "/?pin=" + currentPin;
         }
-        if (!urls.contains(currentUrl)) urls.add(0, currentUrl);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, urls);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerIps.setAdapter(adapter);
-
-        if (urls.contains(currentUrl)) {
-            spinnerIps.setSelection(urls.indexOf(currentUrl));
-        }
-
+        currentUrl = url;
         tvUrl.setText(currentUrl);
         tvUrl.setVisibility(View.VISIBLE);
         tvUrlLabel.setVisibility(View.VISIBLE);
         tvUrlHint.setVisibility(View.VISIBLE);
         btnQrCode.setVisibility(View.VISIBLE);
-        spinnerIps.setVisibility(View.VISIBLE);
+        btnIpDropdown.setVisibility(View.VISIBLE);
     }
 
     private void showQrCode() {
-        String url = (String) spinnerIps.getSelectedItem();
-        if (url == null || url.isEmpty()) return;
-        showQrCodeDialog(url);
+        if (currentUrl == null || currentUrl.isEmpty()) return;
+        showQrCodeDialog(currentUrl);
     }
 
     private void showQrCodeDialog(String url) {
@@ -1197,7 +1177,7 @@ public class MainActivity extends AppCompatActivity {
         tvUrl.setVisibility(View.GONE);
         tvUrlLabel.setVisibility(View.GONE);
         tvUrlHint.setVisibility(View.GONE);
-        spinnerIps.setVisibility(View.GONE);
+        btnIpDropdown.setVisibility(View.GONE);
         btnQrCode.setVisibility(View.GONE);
         currentUrl = "";
         setOptionsEnabled(true);
