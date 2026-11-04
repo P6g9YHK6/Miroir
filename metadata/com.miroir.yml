@@ -49,9 +49,16 @@ Builds:
     gradle: yes
     prebuild: chmod +x gradlew
 
+  - versionName: '2.0'
+    versionCode: 6
+    commit: e8cba6b4575c170fa2aa5d7102b40f3c311520bd
+    subdir: app
+    gradle: yes
+    prebuild: chmod +x gradlew
+
 AllowedAPKSigningKeys: ed0cd1e1d40044a1d727cf21cb0ceac3ef203505c1a94f076c0e15d2e52428c4
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: '1.4'
-CurrentVersionCode: 5
+CurrentVersion: '2.0'
+CurrentVersionCode: 6
