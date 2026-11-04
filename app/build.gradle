@@ -95,6 +95,16 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.17'
+
+    // Workaround for bcprov-jdk18on 1.85 compiled with Java 25 (class version 69)
+    // which is incompatible with Java 21. Force older version.
+    testImplementation 'org.bouncycastle:bcprov-jdk18on:1.80'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.bouncycastle:bcprov-jdk18on:1.80'
+    }
 }
 
 // ART baseline profile bytes aren't guaranteed reproducible across build
