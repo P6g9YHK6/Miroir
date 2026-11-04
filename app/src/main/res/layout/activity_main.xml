@@ -105,23 +105,23 @@
                         android:paddingTop="6dp"
                         android:paddingBottom="6dp"
                         android:visibility="gone"/>
+                    <Spinner
+                        android:id="@+id/spinner_ips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:visibility="gone"
+                        android:backgroundTint="#4f8ef7"
+                        android:spinnerMode="dropdown"/>
                     <ImageButton
                         android:id="@+id/btn_qr_code"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@android:drawable/ic_menu_manage"
+                        android:src="@drawable/ic_qr_code"
                         android:contentDescription="Show QR code"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:visibility="gone"/>
                 </LinearLayout>
-                <Spinner
-                    android:id="@+id/spinner_ips"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone"
-                    android:backgroundTint="#4f8ef7"
-                    android:spinnerMode="dropdown"/>
                 <TextView
                     android:id="@+id/tv_url_hint"
                     android:layout_width="wrap_content"
@@ -276,7 +276,7 @@
                             android:orientation="horizontal"
                             android:layout_marginTop="8dp"
                             android:gravity="center_vertical"
-                            android:weightSum="2">
+                            android:weightSum="3">
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -311,6 +311,26 @@
                                     android:letterSpacing="0.15"/>
                                 <Spinner
                                     android:id="@+id/spinner_bitrate"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:backgroundTint="#4f8ef7"
+                                    android:spinnerMode="dropdown"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="FRAME RATE"
+                                    android:textColor="#555570"
+                                    android:textSize="11sp"
+                                    android:letterSpacing="0.15"/>
+                                <Spinner
+                                    android:id="@+id/spinner_fps_simple"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
@@ -569,46 +589,6 @@
                         android:layout_gravity="end"/>
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#1e1e2e"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="HTTPS"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Self-signed cert — browsers will show a security warning"
-                            android:textColor="#33334a"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch_https_simple"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        app:thumbTint="#4f8ef7"
-                        app:trackTint="#1e1e40"/>
-                </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -690,15 +670,13 @@
                                 android:textColor="#555570"
                                 android:textSize="11sp"
                                 android:letterSpacing="0.15"/>
-                            <TextView
-                                android:id="@+id/tv_fps_label"
-                                android:layout_width="wrap_content"
+                            <Spinner
+                                android:id="@+id/spinner_fps_advanced"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="24 fps"
-                                android:textColor="#4f8ef7"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="8dp"/>
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="#4f8ef7"
+                                android:spinnerMode="dropdown"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -717,6 +695,22 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="18dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FRAME RATE"
+                        android:textColor="#555570"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.15"/>
+                    <TextView
+                        android:id="@+id/tv_fps_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="24 fps"
+                        android:textColor="#4f8ef7"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

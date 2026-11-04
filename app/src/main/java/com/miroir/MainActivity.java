@@ -91,13 +91,13 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar      seekBarQuality;
     private SwitchCompat switchAudio;
     private SwitchCompat switchAutoRestart;
-    private SwitchCompat switchHttps, switchHttpsSimple;
+    private SwitchCompat switchHttps;
     private SwitchCompat switchKeepAwake;
     private Button     btnTabSimple, btnTabAdvanced;
     private LinearLayout layoutSimple, layoutAdvanced, layoutProfileSettings;
     private Button     btnPresetPres, btnPresetGaming, btnPresetDashboard, btnPresetLowBW;
     private Spinner  spinnerSampleRate, spinnerChannels, spinnerEncoding, spinnerAuthMode, spinnerIps;
-    private Spinner  spinnerSampleRateSimple, spinnerChannelsSimple, spinnerEncodingSimple, spinnerAuthModeSimple;
+    private Spinner  spinnerSampleRateSimple, spinnerChannelsSimple, spinnerEncodingSimple, spinnerAuthModeSimple, spinnerFpsSimple;
     private Spinner  spinnerResolution, spinnerBitrate;
     private Spinner  spinnerResolutionAdv, spinnerBitrateAdv;
     private ImageButton  btnQrCode;
@@ -229,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void applyPreset(Preset preset) {
+        // Show profile settings when a preset is selected
+        layoutProfileSettings.setVisibility(View.VISIBLE);
+
         switch (preset) {
             case PRESENTATION:
                 setFps(15);
@@ -368,7 +371,6 @@ public class MainActivity extends AppCompatActivity {
         editBasicPass         = findViewById(R.id.edit_basic_pass);
         editBasicPassSimple   = findViewById(R.id.edit_basic_pass_simple);
         switchHttps            = findViewById(R.id.switch_https);
-        switchHttpsSimple      = findViewById(R.id.switch_https_simple);
         switchKeepAwake    = findViewById(R.id.switch_keep_awake);
         btnTabSimple       = findViewById(R.id.btn_tab_simple);
         btnTabAdvanced     = findViewById(R.id.btn_tab_advanced);
@@ -383,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
         spinnerSampleRateSimple = findViewById(R.id.spinner_sample_rate_simple);
         spinnerChannelsSimple = findViewById(R.id.spinner_channels_simple);
         spinnerEncodingSimple = findViewById(R.id.spinner_encoding_simple);
+        spinnerFpsSimple      = findViewById(R.id.spinner_fps_simple);
         spinnerResolution    = findViewById(R.id.spinner_resolution);
         spinnerBitrate       = findViewById(R.id.spinner_bitrate);
         spinnerResolutionAdv = findViewById(R.id.spinner_resolution_adv);
@@ -395,6 +398,8 @@ public class MainActivity extends AppCompatActivity {
         setupSpinners();
         setupResolution();
         setupBitrate();
+        setupSimpleFps();
+        setupAdvancedFps();
         setupSimpleAudio();
         setupPort();
         setupAutoRestart();
@@ -821,6 +826,28 @@ public class MainActivity extends AppCompatActivity {
         spinnerBitrateAdv.setOnItemSelectedListener(brListener);
     }
 
+    private void setupSimpleFps() {
+        String[] fpsLabels = {"5 fps", "10 fps", "15 fps", "24 fps", "30 fps", "60 fps"};
+        int[]    fpsValues = {5, 10, 15, 24, 30, 60};
+
+        ArrayAdapter<String> fpsAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, fpsLabels);
+        fpsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFpsSimple.setAdapter(fpsAdapter);
+
+        selectedFps = settings.getInt(Settings.KEY_FPS, 24);
+        spinnerFpsSimple.setSelection(indexOf(fpsValues, selectedFps, 3));
+
+        spinnerFpsSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                selectedFps = fpsValues[pos];
+                MiroirService.setTargetFps(selectedFps);
+                settings.putInt(Settings.KEY_FPS, selectedFps);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
+    }
+
     private void setupSimpleAudio() {
         String[] srLabels = {"16 kHz (low bandwidth)", "22 kHz (FM quality)",
                 "44.1 kHz (CD quality)",  "48 kHz (studio)"};
@@ -877,6 +904,30 @@ public class MainActivity extends AppCompatActivity {
                 selectedEncoding = encValues[pos];
                 MiroirService.setAudioEncoding(selectedEncoding);
                 settings.putInt(Settings.KEY_AUDIO_ENCODING, selectedEncoding);
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
+    }
+
+    private void setupAdvancedFps() {
+        String[] fpsLabels = {"5 fps", "10 fps", "15 fps", "24 fps", "30 fps", "60 fps"};
+        int[]    fpsValues = {5, 10, 15, 24, 30, 60};
+
+        ArrayAdapter<String> fpsAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, fpsLabels);
+        fpsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner spinnerFpsAdvanced = findViewById(R.id.spinner_fps_advanced);
+        spinnerFpsAdvanced.setAdapter(fpsAdapter);
+
+        selectedFps = settings.getInt(Settings.KEY_FPS, 24);
+        spinnerFpsAdvanced.setSelection(indexOf(fpsValues, selectedFps, 3));
+
+        spinnerFpsAdvanced.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                selectedFps = fpsValues[pos];
+                MiroirService.setTargetFps(selectedFps);
+                settings.putInt(Settings.KEY_FPS, selectedFps);
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
         });
