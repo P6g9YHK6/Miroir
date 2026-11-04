@@ -89,12 +89,27 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="2dp">
+                    <TextView
+                        android:id="@+id/tv_url"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text=""
+                        android:textColor="#4f8ef7"
+                        android:textSize="17sp"
+                        android:fontFamily="monospace"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:visibility="gone"/>
                     <Spinner
                         android:id="@+id/spinner_ips"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
                         android:visibility="gone"
                         android:backgroundTint="#4f8ef7"
                         android:spinnerMode="dropdown"/>
@@ -107,22 +122,6 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:visibility="gone"/>
                 </LinearLayout>
-                <TextView
-                    android:id="@+id/tv_url"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text=""
-                    android:textColor="#4f8ef7"
-                    android:textSize="17sp"
-                    android:fontFamily="monospace"
-                    android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
-                    android:visibility="gone"/>
                 <TextView
                     android:id="@+id/tv_url_hint"
                     android:layout_width="wrap_content"
