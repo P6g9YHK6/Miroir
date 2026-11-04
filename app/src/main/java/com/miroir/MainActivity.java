@@ -94,11 +94,11 @@ public class MainActivity extends AppCompatActivity {
     private SwitchCompat switchHttps;
     private SwitchCompat switchKeepAwake;
     private Button     btnTabSimple, btnTabAdvanced;
-    private LinearLayout layoutSimple, layoutAdvanced, layoutProfileSettings;
+    private LinearLayout layoutSimple, layoutAdvanced;
     private Button     btnPresetPres, btnPresetGaming, btnPresetDashboard, btnPresetLowBW;
     private Spinner  spinnerSampleRate, spinnerChannels, spinnerEncoding, spinnerAuthMode;
     private ImageButton btnIpDropdown;
-    private Spinner  spinnerSampleRateSimple, spinnerChannelsSimple, spinnerEncodingSimple, spinnerAuthModeSimple, spinnerFpsSimple;
+    private Spinner  spinnerAuthModeSimple;
     private Spinner  spinnerResolution, spinnerBitrate;
     private Spinner  spinnerResolutionAdv, spinnerBitrateAdv;
     private ImageButton  btnQrCode;
@@ -230,9 +230,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void applyPreset(Preset preset) {
-        // Show profile settings when a preset is selected
-        layoutProfileSettings.setVisibility(View.VISIBLE);
-
         switch (preset) {
             case PRESENTATION:
                 setFps(15);
@@ -246,9 +243,9 @@ public class MainActivity extends AppCompatActivity {
                 updateResolutionSpinner(1280, 720);
                 updateBitrateSpinner(4000);
                 // Audio defaults (44.1kHz, stereo, 16-bit)
-                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2); spinnerSampleRateSimple.setSelection(2);
-                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
-                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
+                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2);
+                selectedChannels = 2; spinnerChannels.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0);
                 break;
             case GAMING:
                 setFps(60);
@@ -262,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
                 updateResolutionSpinner(1920, 1080);
                 updateBitrateSpinner(8000);
                 // Audio: 48kHz, stereo, 16-bit
-                selectedSampleRate = 48000; spinnerSampleRate.setSelection(3); spinnerSampleRateSimple.setSelection(3);
-                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
-                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
+                selectedSampleRate = 48000; spinnerSampleRate.setSelection(3);
+                selectedChannels = 2; spinnerChannels.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0);
                 break;
             case DASHBOARD:
                 setFps(5);
@@ -278,9 +275,9 @@ public class MainActivity extends AppCompatActivity {
                 updateResolutionSpinner(1280, 720);
                 updateBitrateSpinner(2000);
                 // Audio defaults
-                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2); spinnerSampleRateSimple.setSelection(2);
-                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
-                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
+                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2);
+                selectedChannels = 2; spinnerChannels.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0);
                 break;
             case LOW_BANDWIDTH:
                 setFps(10);
@@ -294,9 +291,9 @@ public class MainActivity extends AppCompatActivity {
                 updateResolutionSpinner(854, 480);
                 updateBitrateSpinner(1000);
                 // Audio defaults
-                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2); spinnerSampleRateSimple.setSelection(2);
-                selectedChannels = 2; spinnerChannels.setSelection(1); spinnerChannelsSimple.setSelection(1);
-                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0); spinnerEncodingSimple.setSelection(0);
+                selectedSampleRate = 44100; spinnerSampleRate.setSelection(2);
+                selectedChannels = 2; spinnerChannels.setSelection(1);
+                selectedEncoding = AudioFormat.ENCODING_PCM_16BIT; spinnerEncoding.setSelection(0);
                 break;
         }
     }
@@ -385,15 +382,10 @@ public class MainActivity extends AppCompatActivity {
         btnPresetLowBW     = findViewById(R.id.btn_preset_low_bandwidth);
         btnIpDropdown      = findViewById(R.id.btn_ip_dropdown);
         btnQrCode          = findViewById(R.id.btn_qr_code);
-        spinnerSampleRateSimple = findViewById(R.id.spinner_sample_rate_simple);
-        spinnerChannelsSimple = findViewById(R.id.spinner_channels_simple);
-        spinnerEncodingSimple = findViewById(R.id.spinner_encoding_simple);
-        spinnerFpsSimple      = findViewById(R.id.spinner_fps_simple);
         spinnerResolution    = findViewById(R.id.spinner_resolution);
         spinnerBitrate       = findViewById(R.id.spinner_bitrate);
         spinnerResolutionAdv = findViewById(R.id.spinner_resolution_adv);
         spinnerBitrateAdv    = findViewById(R.id.spinner_bitrate_adv);
-        layoutProfileSettings = findViewById(R.id.layout_profile_settings);
 
         setupQuality();
         setupFps();
@@ -401,9 +393,7 @@ public class MainActivity extends AppCompatActivity {
         setupSpinners();
         setupResolution();
         setupBitrate();
-        setupSimpleFps();
         setupAdvancedFps();
-        setupSimpleAudio();
         setupPort();
         setupAutoRestart();
         setupAuth();
@@ -834,89 +824,6 @@ public class MainActivity extends AppCompatActivity {
         };
         spinnerBitrate.setOnItemSelectedListener(brListener);
         spinnerBitrateAdv.setOnItemSelectedListener(brListener);
-    }
-
-    private void setupSimpleFps() {
-        String[] fpsLabels = {"5 fps", "10 fps", "15 fps", "24 fps", "30 fps", "60 fps"};
-        int[]    fpsValues = {5, 10, 15, 24, 30, 60};
-
-        ArrayAdapter<String> fpsAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, fpsLabels);
-        fpsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFpsSimple.setAdapter(fpsAdapter);
-
-        selectedFps = settings.getInt(Settings.KEY_FPS, 24);
-        spinnerFpsSimple.setSelection(indexOf(fpsValues, selectedFps, 3));
-
-        spinnerFpsSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                selectedFps = fpsValues[pos];
-                MiroirService.setTargetFps(selectedFps);
-                settings.putInt(Settings.KEY_FPS, selectedFps);
-            }
-            @Override public void onNothingSelected(AdapterView<?> p) {}
-        });
-    }
-
-    private void setupSimpleAudio() {
-        String[] srLabels = {"16 kHz (low bandwidth)", "22 kHz (FM quality)",
-                "44.1 kHz (CD quality)",  "48 kHz (studio)"};
-        int[]    srValues = {16000, 22050, 44100, 48000};
-
-        ArrayAdapter<String> srAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, srLabels);
-        srAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSampleRateSimple.setAdapter(srAdapter);
-        selectedSampleRate = settings.getInt(Settings.KEY_AUDIO_SAMPLE_RATE, 44100);
-        spinnerSampleRateSimple.setSelection(indexOf(srValues, selectedSampleRate, 2));
-        spinnerSampleRateSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                selectedSampleRate = srValues[pos];
-                MiroirService.setAudioSampleRate(selectedSampleRate);
-                settings.putInt(Settings.KEY_AUDIO_SAMPLE_RATE, selectedSampleRate);
-            }
-            @Override public void onNothingSelected(AdapterView<?> p) {}
-        });
-
-        String[] chLabels = {"Mono", "Stereo"};
-        int[]    chValues = {1, 2};
-
-        ArrayAdapter<String> chAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, chLabels);
-        chAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerChannelsSimple.setAdapter(chAdapter);
-        selectedChannels = settings.getInt(Settings.KEY_AUDIO_CHANNELS, 2);
-        spinnerChannelsSimple.setSelection(indexOf(chValues, selectedChannels, 1));
-        spinnerChannelsSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                selectedChannels = chValues[pos];
-                MiroirService.setAudioChannels(selectedChannels);
-                settings.putInt(Settings.KEY_AUDIO_CHANNELS, selectedChannels);
-            }
-            @Override public void onNothingSelected(AdapterView<?> p) {}
-        });
-
-        String[] encLabels = {"PCM 16-bit (standard)", "PCM 8-bit (small)", "PCM Float (high quality)"};
-        int[]    encValues = {
-                AudioFormat.ENCODING_PCM_16BIT,
-                AudioFormat.ENCODING_PCM_8BIT,
-                AudioFormat.ENCODING_PCM_FLOAT
-        };
-
-        ArrayAdapter<String> encAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, encLabels);
-        encAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerEncodingSimple.setAdapter(encAdapter);
-        selectedEncoding = settings.getInt(Settings.KEY_AUDIO_ENCODING, AudioFormat.ENCODING_PCM_16BIT);
-        spinnerEncodingSimple.setSelection(indexOf(encValues, selectedEncoding, 0));
-        spinnerEncodingSimple.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                selectedEncoding = encValues[pos];
-                MiroirService.setAudioEncoding(selectedEncoding);
-                settings.putInt(Settings.KEY_AUDIO_ENCODING, selectedEncoding);
-            }
-            @Override public void onNothingSelected(AdapterView<?> p) {}
-        });
     }
 
     private void setupAdvancedFps() {

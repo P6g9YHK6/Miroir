@@ -243,190 +243,11 @@
                     android:ellipsize="end"/>
             </LinearLayout>
 
-            <!-- Profile settings (shown below presets) -->
-            <LinearLayout
-                android:id="@+id/layout_profile_settings"
+            <!-- Profile settings moved to Advanced tab -->
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="12dp"
-                android:visibility="gone">
-                
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#13131a"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="12dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="18dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="VIDEO"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center_vertical"
-                            android:weightSum="3">
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="RESOLUTION"
-                                    android:textColor="#555570"
-                                    android:textSize="11sp"
-                                    android:letterSpacing="0.15"/>
-                                <Spinner
-                                    android:id="@+id/spinner_resolution"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="4dp"
-                                    android:backgroundTint="#4f8ef7"
-                                    android:spinnerMode="dropdown"/>
-                            </LinearLayout>
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="BITRATE"
-                                    android:textColor="#555570"
-                                    android:textSize="11sp"
-                                    android:letterSpacing="0.15"/>
-                                <Spinner
-                                    android:id="@+id/spinner_bitrate"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="4dp"
-                                    android:backgroundTint="#4f8ef7"
-                                    android:spinnerMode="dropdown"/>
-                            </LinearLayout>
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="FRAME RATE"
-                                    android:textColor="#555570"
-                                    android:textSize="11sp"
-                                    android:letterSpacing="0.15"/>
-                                <Spinner
-                                    android:id="@+id/spinner_fps_simple"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="4dp"
-                                    android:backgroundTint="#4f8ef7"
-                                    android:spinnerMode="dropdown"/>
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#13131a"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    android:layout_marginBottom="12dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="18dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="AUDIO"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center_vertical">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="SAMPLE RATE"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <Spinner
-                            android:id="@+id/spinner_sample_rate_simple"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#4f8ef7"
-                            android:spinnerMode="dropdown"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="12dp">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="CHANNELS"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <Spinner
-                            android:id="@+id/spinner_channels_simple"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#4f8ef7"
-                            android:spinnerMode="dropdown"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="12dp">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="ENCODING"
-                            android:textColor="#555570"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.15"/>
-                        <Spinner
-                            android:id="@+id/spinner_encoding_simple"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="#4f8ef7"
-                            android:spinnerMode="dropdown"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+                android:layout_height="0dp"
+                android:visibility="gone"/>
 
             <!-- Auth (always visible in Simple) -->
             <androidx.cardview.widget.CardView
@@ -602,87 +423,6 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <!-- Video Settings card -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="#13131a"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                android:layout_marginBottom="12dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VIDEO"
-                        android:textColor="#555570"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.15"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center_vertical"
-                        android:weightSum="2">
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="JPEG QUALITY"
-                                android:textColor="#555570"
-                                android:textSize="11sp"
-                                android:letterSpacing="0.15"/>
-                            <TextView
-                                android:id="@+id/tv_quality"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="70%"
-                                android:textColor="#4f8ef7"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="8dp"/>
-                            <SeekBar
-                                android:id="@+id/seekbar_quality"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:min="10"
-                                android:progressTint="#4f8ef7"
-                                android:thumbTint="#4f8ef7"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="FRAME RATE"
-                                android:textColor="#555570"
-                                android:textSize="11sp"
-                                android:letterSpacing="0.15"/>
-                            <Spinner
-                                android:id="@+id/spinner_fps_advanced"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:backgroundTint="#4f8ef7"
-                                android:spinnerMode="dropdown"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
             <!-- FPS presets card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -779,7 +519,7 @@
                         android:orientation="horizontal"
                         android:layout_marginTop="8dp"
                         android:gravity="center_vertical"
-                        android:weightSum="2">
+                        android:weightSum="3">
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -820,6 +560,128 @@
                                 android:backgroundTint="#4f8ef7"
                                 android:spinnerMode="dropdown"/>
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="FRAME RATE"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <Spinner
+                                android:id="@+id/spinner_fps_advanced"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="#4f8ef7"
+                                android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Video Settings card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#13131a"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VIDEO SETTINGS"
+                        android:textColor="#555570"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.15"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="2">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="JPEG QUALITY"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <TextView
+                                android:id="@+id/tv_quality"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="70%"
+                                android:textColor="#4f8ef7"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp"/>
+                            <SeekBar
+                                android:id="@+id/seekbar_quality"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:min="10"
+                                android:progressTint="#4f8ef7"
+                                android:thumbTint="#4f8ef7"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="RESOLUTION"
+                                android:textColor="#555570"
+                                android:textSize="11sp"
+                                android:letterSpacing="0.15"/>
+                            <Spinner
+                                android:id="@+id/spinner_resolution"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:backgroundTint="#4f8ef7"
+                                android:spinnerMode="dropdown"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="BITRATE"
+                            android:textColor="#555570"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"/>
+                        <Spinner
+                            android:id="@+id/spinner_bitrate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#4f8ef7"
+                            android:spinnerMode="dropdown"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
