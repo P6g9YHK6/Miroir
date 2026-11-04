@@ -63,7 +63,7 @@ jobs:
 
       - name: Upload test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-report
           path: app/build/reports/tests/testDebugUnitTest
@@ -116,7 +116,7 @@ jobs:
              artifacts/Miroir-release-unsigned-${SHORT}.apk
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Miroir-debug-${{ github.sha }}
           path: artifacts/Miroir-debug-*.apk
@@ -124,7 +124,7 @@ jobs:
 
       - name: Upload release APK (unsigned)
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Miroir-release-unsigned-${{ github.sha }}
           path: artifacts/Miroir-release-unsigned-*.apk
