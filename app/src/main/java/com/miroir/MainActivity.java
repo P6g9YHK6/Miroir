@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         LOW_BANDWIDTH
     }
 
-    private TextView tvStatus, tvUrl, tvUrlLabel, tvUrlHint, tvQuality, tvFpsLabel, tvPin, tvPinSimple;
+    private TextView tvStatus, tvQuality, tvFpsLabel, tvPin, tvPinSimple;
     private Button   btnToggle, btnFps5, btnFps10, btnFps15, btnFps24, btnFps30, btnFps60;
     private Button   btnPinRegen, btnPinRegenSimple, btnBasicRegen, btnBasicRegenSimple;
     private SeekBar      seekBarQuality;
@@ -335,9 +335,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindViewsAndListeners() {
         tvStatus          = findViewById(R.id.tv_status);
-        tvUrl             = findViewById(R.id.tv_url);
-        tvUrlLabel        = findViewById(R.id.tv_url_label);
-        tvUrlHint         = findViewById(R.id.tv_url_hint);
         tvQuality         = findViewById(R.id.tv_quality);
         tvFpsLabel        = findViewById(R.id.tv_fps_label);
         btnToggle         = findViewById(R.id.btn_toggle);
@@ -356,12 +353,14 @@ public class MainActivity extends AppCompatActivity {
         btnFps60          = findViewById(R.id.btn_fps_60);
         spinnerAuthMode        = findViewById(R.id.spinner_auth_mode);
         spinnerAuthModeSimple = findViewById(R.id.spinner_auth_mode_simple);
+        spinnerIps            = findViewById(R.id.spinner_ips);
         layoutPinRow          = findViewById(R.id.layout_pin_row);
         layoutPinRowSimple    = findViewById(R.id.layout_pin_row_simple);
         layoutBasicRow        = findViewById(R.id.layout_basic_row);
         layoutBasicRowSimple  = findViewById(R.id.layout_basic_row_simple);
         tvPin                 = findViewById(R.id.tv_pin);
         tvPinSimple           = findViewById(R.id.tv_pin_simple);
+        btnQrCode             = findViewById(R.id.btn_qr_code);
         btnPinRegen           = findViewById(R.id.btn_pin_regen);
         btnPinRegenSimple     = findViewById(R.id.btn_pin_regen_simple);
         btnBasicRegen         = findViewById(R.id.btn_basic_regen);
@@ -433,8 +432,16 @@ public class MainActivity extends AppCompatActivity {
         btnPresetLowBW.setOnClickListener(v -> applyPreset(Preset.LOW_BANDWIDTH));
 
         btnToggle.setOnClickListener(v -> { if (isStreaming) stopStreaming(); else requestCapturePermission(); });
-        tvUrl.setOnClickListener(v -> shareUrl());
-        tvUrl.setOnLongClickListener(v -> { openInBrowser(); return true; });
+        spinnerIps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                String selected = (String) p.getItemAtPosition(pos);
+                if (selected != null && !selected.equals(currentUrl)) {
+                    currentUrl = selected;
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
+        btnQrCode.setOnClickListener(v -> showQrCode());
     }
 
     private void setupQuality() {
@@ -576,20 +583,33 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUrlDisplay(String ip) {
         String protocol = httpsEnabled ? "https" : "http";
-        String url = protocol + "://" + ip + ":" + selectedPort;
-        currentUrl = url;
-        tvUrl.setText(url);
-        tvUrl.setVisibility(View.VISIBLE);
-        tvUrlLabel.setVisibility(View.VISIBLE);
-        tvUrlHint.setVisibility(View.VISIBLE);
+        List<String> ips = getAllLocalIps();
+        List<String> urls = new ArrayList<>();
+        for (String addr : ips) {
+            urls.add(protocol + "://" + addr + ":" + selectedPort);
+        }
+        if (!urls.contains(currentUrl)) urls.add(0, currentUrl);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, urls);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerIps.setAdapter(adapter);
+
+        if (urls.contains(currentUrl)) {
+            spinnerIps.setSelection(urls.indexOf(currentUrl));
+        }
+
         btnQrCode.setVisibility(View.VISIBLE);
         spinnerIps.setVisibility(View.VISIBLE);
     }
 
-    private void showQrCodeDialog(String ip) {
-        String protocol = httpsEnabled ? "https" : "http";
-        String url = protocol + "://" + ip + ":" + selectedPort;
-        
+    private void showQrCode() {
+        String url = (String) spinnerIps.getSelectedItem();
+        if (url == null || url.isEmpty()) return;
+        showQrCodeDialog(url);
+    }
+
+    private void showQrCodeDialog(String url) {
         try {
             com.google.zxing.Writer writer = new com.google.zxing.qrcode.QRCodeWriter();
             com.google.zxing.common.BitMatrix bitMatrix = writer.encode(
@@ -604,7 +624,7 @@ public class MainActivity extends AppCompatActivity {
             }
             
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("QR Code for " + ip);
+            builder.setTitle("QR Code");
             ImageView imageView = new ImageView(this);
             imageView.setImageBitmap(bitmap);
             imageView.setPadding(40, 20, 40, 20);
@@ -1152,10 +1172,7 @@ public class MainActivity extends AppCompatActivity {
         if (authMode == MiroirService.AuthMode.PIN) {
             currentUrl += "/?pin=" + currentPin;
         }
-        tvUrl.setText(currentUrl);
-        tvUrl.setVisibility(View.VISIBLE);
-        tvUrlLabel.setVisibility(View.VISIBLE);
-        tvUrlHint.setVisibility(View.VISIBLE);
+        updateUrlDisplay(getLocalIpAddress());
         setOptionsEnabled(false);
         if (keepAwake) {
             getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -1167,9 +1184,8 @@ public class MainActivity extends AppCompatActivity {
         tvStatus.setTextColor(getColor(R.color.gray));
         btnToggle.setText("Start Streaming");
         btnToggle.setBackgroundColor(getColor(R.color.colorPrimary));
-        tvUrl.setVisibility(View.GONE);
-        tvUrlLabel.setVisibility(View.GONE);
-        tvUrlHint.setVisibility(View.GONE);
+        spinnerIps.setVisibility(View.GONE);
+        btnQrCode.setVisibility(View.GONE);
         currentUrl = "";
         setOptionsEnabled(true);
         getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
