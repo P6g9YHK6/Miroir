@@ -99,12 +99,12 @@ dependencies {
 
     // Workaround for bcprov-jdk18on 1.85 compiled with Java 25 (class version 69)
     // which is incompatible with Java 21. Force older version.
-    testImplementation 'org.bouncycastle:bcprov-jdk18on:1.80'
+    testImplementation 'org.bouncycastle:bcprov-jdk18on:1.86'
 }
 
 configurations.all {
     resolutionStrategy {
-        force 'org.bouncycastle:bcprov-jdk18on:1.80'
+        force 'org.bouncycastle:bcprov-jdk18on:1.86'
     }
 }
 
