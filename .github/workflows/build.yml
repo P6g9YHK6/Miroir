@@ -203,7 +203,7 @@ jobs:
              app/build/outputs/apk/release/Miroir-${{ github.ref_name }}.apk
 
       - name: Download versioned debug APK from build job
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: Miroir-${{ github.ref_name }}-debug
           path: artifacts
