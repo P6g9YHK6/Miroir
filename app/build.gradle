@@ -95,7 +95,7 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.2'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.robolectric:robolectric:4.17'
+    testImplementation 'org.robolectric:robolectric:4.18.1'
 
     // Workaround for bcprov-jdk18on 1.85 compiled with Java 25 (class version 69)
     // which is incompatible with Java 21. Force older version.
